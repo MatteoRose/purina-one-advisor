@@ -30,27 +30,35 @@ export default function HeroSection() {
   };
 
   return (
-    <section className="relative min-h-[calc(100vh-4rem)] flex flex-col items-center justify-center px-4 sm:px-6 overflow-hidden">
-      {/* Animated background layers */}
+    <section className="relative min-h-[calc(100vh-4rem)] flex flex-col items-center justify-center px-4 sm:px-6 overflow-hidden pb-16">
+      {/* ── Hero-specific gradient layers (on top of BackgroundEffects) ── */}
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
           background:
-            "radial-gradient(ellipse 80% 60% at 50% 40%, rgba(233,28,36,0.14) 0%, transparent 70%)",
+            "radial-gradient(ellipse 85% 65% at 50% 38%, rgba(233,28,36,0.14) 0%, transparent 70%)",
         }}
       />
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
           background:
-            "radial-gradient(circle at 20% 80%, rgba(233,28,36,0.06) 0%, transparent 50%)",
+            "radial-gradient(circle at 18% 82%, rgba(233,28,36,0.07) 0%, transparent 50%)",
         }}
       />
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
           background:
-            "radial-gradient(circle at 80% 20%, rgba(233,28,36,0.05) 0%, transparent 40%)",
+            "radial-gradient(circle at 82% 18%, rgba(233,28,36,0.05) 0%, transparent 40%)",
+        }}
+      />
+      {/* Extra warm wash for the hero */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background:
+            "radial-gradient(ellipse 60% 40% at 50% 70%, rgba(120,20,30,0.06) 0%, transparent 60%)",
         }}
       />
       {/* Subtle grid pattern overlay */}
@@ -117,17 +125,17 @@ export default function HeroSection() {
           <div className="h-px w-12 bg-gradient-to-l from-transparent to-purina-red/40" />
         </motion.div>
 
-        {/* Subtitle — two lines */}
+        {/* Subtitle -- two lines */}
         <motion.div
           className="mb-8 sm:mb-12 max-w-xl mx-auto"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6 }}
         >
-          <p className="text-text-muted text-sm sm:text-base md:text-lg leading-relaxed">
+          <p className="text-text-muted text-xs sm:text-base md:text-lg leading-relaxed">
             {t.hero.subtitle}
           </p>
-          <p className="text-purina-red text-sm sm:text-base md:text-lg font-bold italic mt-1.5 tracking-wide">
+          <p className="text-purina-red text-xs sm:text-base md:text-lg font-bold italic mt-1.5 tracking-wide">
             {t.hero.subtitleAccent}
           </p>
         </motion.div>
