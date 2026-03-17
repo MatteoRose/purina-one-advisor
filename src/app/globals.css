@@ -1,26 +1,370 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  --color-bg-main: #111111;
+  --color-bg-card: #1E1E1E;
+  --color-bg-card-hover: #2B2B2B;
+  --color-purina-red: #E91C24;
+  --color-purina-red-hover: #C0161D;
+  --color-hover-red-bg: #3B1C1D;
+  --color-border-dark: #404040;
+  --color-text-title: #FFFFFF;
+  --color-text-body: #E0E0E0;
+  --color-text-muted: #B0B0B0;
+  --font-sans: 'Inter', 'Segoe UI', system-ui, sans-serif;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* -- Light Theme Override ---------------------------------------- */
+
+html.light {
+  --color-bg-main: #F7F7F8;
+  --color-bg-card: #FFFFFF;
+  --color-bg-card-hover: #F0F0F2;
+  --color-hover-red-bg: #FDE8E8;
+  --color-border-dark: #D4D4D8;
+  --color-text-title: #18181B;
+  --color-text-body: #3F3F46;
+  --color-text-muted: #71717A;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+html.light ::-webkit-scrollbar-track {
+  background: #F7F7F8;
+}
+
+html.light ::-webkit-scrollbar-thumb {
+  background: #C0C0C0;
+}
+
+html.light * {
+  scrollbar-color: #C0C0C0 #F7F7F8;
+}
+
+/* -- Base -------------------------------------------------------- */
+
+html {
+  scroll-behavior: smooth;
+}
+
+::selection {
+  background-color: #E91C24;
+  color: #FFFFFF;
+}
+
+/* -- Scrollbar (dark theme) -------------------------------------- */
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1E1E1E;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #404040;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555555;
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #404040 #1E1E1E;
+}
+
+/* -- Custom range / slider styling ------------------------------- */
+
+input[type='range'] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 8px;
+  border-radius: 4px;
+  background: #404040;
+  outline: none;
+}
+
+input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #E91C24;
+  cursor: pointer;
+  border: 3px solid #FFFFFF;
+  box-shadow: 0 0 8px rgba(233, 28, 36, 0.3);
+  transition: transform 0.15s ease;
+}
+
+input[type='range']::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+}
+
+input[type='range']::-moz-range-thumb {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #E91C24;
+  cursor: pointer;
+  border: 3px solid #FFFFFF;
+  box-shadow: 0 0 8px rgba(233, 28, 36, 0.3);
+  transition: transform 0.15s ease;
+}
+
+input[type='range']::-moz-range-thumb:hover {
+  transform: scale(1.15);
+}
+
+/* -- Print ------------------------------------------------------- */
+
+@media print {
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  html, body {
+    background: #FFFFFF !important;
+    color: #000000 !important;
+    font-size: 10px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    line-height: 1.3 !important;
+  }
+
+  /* Hide non-printable elements */
+  header,
+  nav,
+  .no-print {
+    display: none !important;
+  }
+
+  /* Remove padding from main */
+  main {
+    padding-top: 0 !important;
+  }
+
+  /* Compact the confirmation page container */
+  .print\:bg-white {
+    background: #FFFFFF !important;
+    color: #000000 !important;
+    padding: 8px 12px !important;
+    max-width: 100% !important;
+  }
+
+  /* Prevent page breaks inside cards */
+  .print\:bg-white > div {
+    page-break-inside: avoid;
+  }
+
+  /* Smaller checkmark */
+  .print\:bg-white .w-16 {
+    width: 32px !important;
+    height: 32px !important;
+  }
+
+  .print\:bg-white .w-16 span {
+    font-size: 16px !important;
+  }
+
+  .print\:bg-white .my-8 {
+    margin-top: 4px !important;
+    margin-bottom: 4px !important;
+  }
+
+  /* Compact card spacing */
+  .print\:bg-white .mb-5 {
+    margin-bottom: 6px !important;
+  }
+
+  .print\:bg-white .p-5 {
+    padding: 8px !important;
+  }
+
+  .print\:bg-white .my-6 {
+    margin-top: 4px !important;
+    margin-bottom: 4px !important;
+  }
+
+  .print\:bg-white .mt-6 {
+    margin-top: 4px !important;
+  }
+
+  .print\:bg-white .mt-1 {
+    margin-top: 2px !important;
+  }
+
+  /* Compact headings */
+  .print\:bg-white h1 {
+    font-size: 16px !important;
+    margin-bottom: 2px !important;
+  }
+
+  .print\:bg-white h2 {
+    font-size: 10px !important;
+    margin-bottom: 3px !important;
+  }
+
+  .print\:bg-white p {
+    font-size: 10px !important;
+    line-height: 1.3 !important;
+  }
+
+  /* Compact grid */
+  .print\:bg-white .grid {
+    gap: 2px !important;
+  }
+
+  .print\:bg-white .gap-1 {
+    gap: 2px !important;
+  }
+
+  /* Card borders for print */
+  .print\:bg-white .bg-bg-card {
+    background: #F9F9F9 !important;
+    border: 1px solid #DDD !important;
+    border-left-width: 3px !important;
+  }
+
+  /* Text colors for print */
+  .print\:bg-white .text-text-title,
+  .print\:bg-white .text-text-body {
+    color: #000000 !important;
+  }
+
+  .print\:bg-white .text-text-muted {
+    color: #555555 !important;
+  }
+
+  .print\:bg-white .text-purina-red {
+    color: #E91C24 !important;
+  }
+
+  /* Hide buttons */
+  .print\:bg-white button {
+    display: none !important;
+  }
+
+  /* Decorative divider */
+  .print\:bg-white .h-0\.5 {
+    display: none !important;
+  }
+
+  /* Total row */
+  .print\:bg-white .text-2xl {
+    font-size: 14px !important;
+  }
+
+  .print\:bg-white .text-lg {
+    font-size: 12px !important;
+  }
+
+  .print\:bg-white .text-3xl {
+    font-size: 16px !important;
+  }
+
+  /* Product rows spacing */
+  .print\:bg-white .py-2\.5 {
+    padding-top: 2px !important;
+    padding-bottom: 2px !important;
+  }
+
+  /* Add print header */
+  .print\:bg-white::before {
+    content: "PURINA ONE - Nutrition Plan";
+    display: block;
+    font-size: 9px;
+    font-weight: bold;
+    color: #E91C24;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    border-bottom: 2px solid #E91C24;
+    padding-bottom: 4px;
+    margin-bottom: 6px;
+  }
+
+  /* Page settings */
+  @page {
+    margin: 10mm 12mm;
+    size: A4;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* -- Keyframes --------------------------------------------------- */
+
+@keyframes fadeSlideUp {
+  0% {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulseCart {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.25);
+  }
+}
+
+@keyframes revealUp {
+  0% {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Utility classes for animations */
+.animate-fade-slide-up {
+  animation: fadeSlideUp 0.3s ease-out forwards;
+}
+
+.animate-pulse-cart {
+  animation: pulseCart 0.4s ease-in-out;
+}
+
+.animate-reveal-up {
+  animation: revealUp 0.5s ease-out forwards;
+}
+
+/* -- Shimmer (skeleton loading) ---------------------------------- */
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.animate-shimmer {
+  background: linear-gradient(90deg, transparent 25%, rgba(255,255,255,0.08) 50%, transparent 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+/* -- Shake (input validation) ------------------------------------ */
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-8px); }
+  40% { transform: translateX(8px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(4px); }
+}
+
+.animate-shake {
+  animation: shake 0.4s ease-in-out;
 }
