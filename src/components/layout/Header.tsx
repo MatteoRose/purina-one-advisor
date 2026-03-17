@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
+import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { useAdvisorStore } from '@/stores/useAdvisorStore';
 import { useTranslation } from '@/i18n/config';
@@ -50,22 +51,24 @@ export default function Header() {
 
         {/* Right side: cart + theme + language */}
         <div className="flex items-center gap-2 sm:gap-3">
-          {/* Cart badge */}
-          <motion.div
-            key={totalItems}
-            initial={{ scale: 1.3 }}
-            animate={{ scale: 1 }}
-            transition={{ type: 'spring', stiffness: 400, damping: 15 }}
-            className="flex items-center gap-1.5 bg-bg-card-hover/60 px-3 py-1.5 rounded-full border border-border-dark"
-          >
-            <span className="text-base">&#x1F6D2;</span>
-            <span className="text-purina-red font-bold text-sm tabular-nums">
-              {totalItems}
-            </span>
-            <span className="text-text-muted text-xs hidden sm:inline">
-              {totalItems === 1 ? t.header.cartItem ?? t.header.cartItems : t.header.cartItems}
-            </span>
-          </motion.div>
+          {/* Cart badge — clickable, navigates to /cart */}
+          <Link href="/cart">
+            <motion.div
+              key={totalItems}
+              initial={{ scale: 1.3 }}
+              animate={{ scale: 1 }}
+              transition={{ type: 'spring', stiffness: 400, damping: 15 }}
+              className="flex items-center gap-1.5 bg-bg-card-hover/60 px-3 py-1.5 rounded-full border border-border-dark cursor-pointer hover:border-purina-red/60 hover:bg-bg-card-hover transition-all duration-200"
+            >
+              <span className="text-base">&#x1F6D2;</span>
+              <span className="text-purina-red font-bold text-sm tabular-nums">
+                {totalItems}
+              </span>
+              <span className="text-text-muted text-xs hidden sm:inline">
+                {totalItems === 1 ? t.header.cartItem ?? t.header.cartItems : t.header.cartItems}
+              </span>
+            </motion.div>
+          </Link>
 
           {/* Theme toggle */}
           <button

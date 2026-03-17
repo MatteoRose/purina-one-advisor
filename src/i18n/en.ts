@@ -113,6 +113,7 @@ export const en = {
     restart: "Start a New Plan",
     thankYou: "Thank you for choosing Purina ONE! Your dog deserves the best nutrition.",
   },
+  tips_label: "Did you know?",
   footer: {
     disclaimer: "For informational purposes only. Consult your veterinarian for specific dietary advice.",
   },

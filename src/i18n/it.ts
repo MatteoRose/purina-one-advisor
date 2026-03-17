@@ -113,6 +113,7 @@ export const it = {
     restart: "Nuovo Piano",
     thankYou: "Grazie per aver scelto Purina ONE! Il tuo cane merita la migliore nutrizione.",
   },
+  tips_label: "Lo sapevi?",
   footer: {
     disclaimer: "Solo a scopo informativo. Consulta il tuo veterinario per consigli dietetici specifici.",
   },
