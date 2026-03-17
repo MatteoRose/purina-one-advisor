@@ -31,34 +31,12 @@ export default function HeroSection() {
 
   return (
     <section className="relative min-h-[calc(100vh-4rem)] flex flex-col items-center justify-center px-4 sm:px-6 overflow-hidden pb-16">
-      {/* ── Hero-specific gradient layers (on top of BackgroundEffects) ── */}
+      {/* ── Subtle hero glow — very light, matches global background ── */}
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
           background:
-            "radial-gradient(ellipse 85% 65% at 50% 38%, rgba(233,28,36,0.14) 0%, transparent 70%)",
-        }}
-      />
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background:
-            "radial-gradient(circle at 18% 82%, rgba(233,28,36,0.07) 0%, transparent 50%)",
-        }}
-      />
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background:
-            "radial-gradient(circle at 82% 18%, rgba(233,28,36,0.05) 0%, transparent 40%)",
-        }}
-      />
-      {/* Extra warm wash for the hero */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background:
-            "radial-gradient(ellipse 60% 40% at 50% 70%, rgba(120,20,30,0.06) 0%, transparent 60%)",
+            "radial-gradient(ellipse 100% 80% at 50% 40%, rgba(233,28,36,0.05) 0%, transparent 70%)",
         }}
       />
       {/* Subtle grid pattern overlay */}
