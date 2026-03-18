@@ -37,7 +37,7 @@ export default function WeightStep() {
       <div className="h-0.5 w-16 bg-purina-red rounded-full mb-8" />
 
       {/* Weight card */}
-      <div className="bg-bg-card rounded-2xl border-2 border-border-dark p-5 sm:p-8 max-w-lg mx-auto shadow-lg shadow-black/5">
+      <div className="bg-bg-card rounded-2xl border-2 border-border-dark p-5 sm:p-8 max-w-lg mx-auto shadow-xl shadow-black/20">
         {/* Weight display */}
         <motion.div
           key={profile.weight.toFixed(1)}

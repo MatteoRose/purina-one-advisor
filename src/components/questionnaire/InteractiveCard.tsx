@@ -24,10 +24,15 @@ export default function InteractiveCard({
         flex flex-row sm:flex-col items-center sm:items-stretch
         ${
           selected
-            ? "border-[3px] border-purina-red shadow-lg shadow-purina-red/10"
-            : "border-2 border-border-dark hover:border-purina-red/60 hover:shadow-md hover:shadow-black/10"
+            ? "border-[3px] border-purina-red shadow-xl shadow-purina-red/15"
+            : "border-2 border-border-dark shadow-lg shadow-black/20 hover:border-purina-red/60 hover:shadow-xl hover:shadow-black/15"
         }
       `}
+      style={{
+        boxShadow: selected
+          ? "inset 0 1px 2px rgba(233,28,36,0.08), var(--tw-shadow)"
+          : "inset 0 1px 2px rgba(255,255,255,0.04), var(--tw-shadow)",
+      }}
     >
       {/* Selected checkmark badge */}
       {selected && (

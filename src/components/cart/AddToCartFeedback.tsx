@@ -33,37 +33,25 @@ export default function AddToCartFeedback() {
 
   return (
     <div
-      className={`fixed bottom-6 left-1/2 z-[100] w-[90%] max-w-md transition-all duration-300 ${
+      className={`fixed left-1/2 z-[100] w-[90%] max-w-md transition-all duration-300 ${
         show
           ? 'opacity-100 translate-y-0 -translate-x-1/2'
           : 'opacity-0 translate-y-4 -translate-x-1/2 pointer-events-none'
       }`}
+      style={{ bottom: 'max(5rem, env(safe-area-inset-bottom, 1.5rem) + 1.5rem)' }}
     >
       <div className="bg-bg-card border-2 border-green-500 rounded-2xl px-5 py-4 shadow-2xl shadow-green-500/20 flex items-center gap-4">
-        {/* Green checkmark circle */}
         <div className="w-10 h-10 rounded-full bg-green-500 flex items-center justify-center flex-shrink-0">
-          <span className="text-white text-xl font-bold">✓</span>
+          <span className="text-white text-xl font-bold">&#x2713;</span>
         </div>
-
-        {/* Product image */}
-        <Image
-          src={product.img}
-          alt={name}
-          width={40}
-          height={40}
-          className="rounded-lg flex-shrink-0 object-contain"
-        />
-
-        {/* Text */}
+        <Image src={product.img} alt={name} width={40} height={40} className="rounded-lg flex-shrink-0 object-contain" />
         <div className="flex-1 min-w-0">
           <p className="font-bold text-text-title text-sm truncate">{name}</p>
           <p className="text-green-400 text-xs font-semibold">
-            {t.results.added} — €{product.price.toFixed(2)}
+            {t.results.added} &mdash; &euro;{product.price.toFixed(2)}
           </p>
         </div>
-
-        {/* Cart icon */}
-        <span className="text-2xl">🛒</span>
+        <span className="text-2xl">&#x1F6D2;</span>
       </div>
     </div>
   );

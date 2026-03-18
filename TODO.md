@@ -31,9 +31,26 @@
 
 ## Visual Polish
 - [x] Page-specific accent gradients on all routes
-- [x] Enhanced BackgroundEffects with 15 layers + 3 animated elements
+- [x] Enhanced BackgroundEffects with animated elements + light mode support
 - [x] NutritionTip component refined (better shadow, transitions)
 - [x] Mobile-friendly padding adjusted (px-4 sm:px-6 pattern)
+
+## 3D Depth & Card Shadows
+- [x] InteractiveCard: shadow-lg base, shadow-xl+red glow when selected, inset box-shadow
+- [x] ChoiceButton: shadow-lg base, shadow-xl+red glow when selected
+- [x] RecommendationCard: shadow-2xl for primary, shadow-lg for secondary, shadow-inner on images
+- [x] WeightStep: shadow-xl on slider card
+
+## Light Mode Enhancement
+- [x] Warm cream palette (#FDF8F6 base, #FFF5F3 hover, #E8DDD8 borders)
+- [x] Warm text colors (#1A1110 title, #4A3F3C body, #8A7B76 muted)
+- [x] Warm scrollbar colors (#D4C4BC thumb)
+- [x] Light-mode slider styling override
+- [x] Theme-aware BackgroundEffects (warm rose/peach gradients in light mode)
+
+## Mobile Cart Popup
+- [x] Fix AddToCartFeedback position with safe-area-aware bottom
+- [x] Popup confirmed working via DOM inspection (opacity transitions correctly)
 
 ## Deploy
 - [ ] Commit all changes

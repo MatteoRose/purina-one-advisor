@@ -25,8 +25,8 @@ export default function RecommendationCard({ rec, rank, onAddToCart }: Recommend
     <motion.div
       className={`rounded-2xl border-2 overflow-hidden ${
         isPrimary
-          ? "border-purina-red bg-gradient-to-br from-bg-card via-bg-card to-hover-red-bg/20 shadow-xl shadow-purina-red/8"
-          : "bg-bg-card border-border-dark hover:border-text-muted/50 transition-all duration-200 hover:shadow-md hover:shadow-black/10"
+          ? "border-purina-red bg-gradient-to-br from-bg-card via-bg-card to-hover-red-bg/20 shadow-2xl shadow-purina-red/15"
+          : "bg-bg-card border-border-dark shadow-lg shadow-black/25 hover:border-text-muted/50 transition-all duration-200 hover:shadow-xl hover:shadow-black/20"
       }`}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
@@ -53,7 +53,7 @@ export default function RecommendationCard({ rec, rank, onAddToCart }: Recommend
 
         <div className={`flex ${isPrimary ? "flex-col md:flex-row" : "flex-row"} gap-5`}>
           {/* Product Image */}
-          <div className={`flex-shrink-0 bg-bg-card-hover/60 rounded-xl flex items-center justify-center ${
+          <div className={`flex-shrink-0 bg-bg-card-hover/60 rounded-xl flex items-center justify-center shadow-inner ${
             isPrimary ? "w-[180px] h-[220px] self-center md:self-start" : "w-[100px] h-[100px]"
           }`}>
             <Image
