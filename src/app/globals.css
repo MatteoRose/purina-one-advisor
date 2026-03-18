@@ -17,26 +17,26 @@
 /* -- Light Theme Override ---------------------------------------- */
 
 html.light {
-  --color-bg-main: #F7F7F8;
+  --color-bg-main: #FDF8F6;
   --color-bg-card: #FFFFFF;
-  --color-bg-card-hover: #F0F0F2;
+  --color-bg-card-hover: #FFF5F3;
   --color-hover-red-bg: #FDE8E8;
-  --color-border-dark: #D4D4D8;
-  --color-text-title: #18181B;
-  --color-text-body: #3F3F46;
-  --color-text-muted: #71717A;
+  --color-border-dark: #E8DDD8;
+  --color-text-title: #1A1110;
+  --color-text-body: #4A3F3C;
+  --color-text-muted: #8A7B76;
 }
 
 html.light ::-webkit-scrollbar-track {
-  background: #F7F7F8;
+  background: #FDF8F6;
 }
 
 html.light ::-webkit-scrollbar-thumb {
-  background: #C0C0C0;
+  background: #D4C4BC;
 }
 
 html.light * {
-  scrollbar-color: #C0C0C0 #F7F7F8;
+  scrollbar-color: #D4C4BC #FDF8F6;
 }
 
 /* -- Base -------------------------------------------------------- */
@@ -74,6 +74,22 @@ html {
 * {
   scrollbar-width: thin;
   scrollbar-color: #404040 #1E1E1E;
+}
+
+/* -- Light mode slider track override ----------------------------- */
+
+html.light input[type='range'] {
+  background: #E8DDD8;
+}
+
+html.light input[type='range']::-webkit-slider-thumb {
+  border-color: #FDF8F6;
+  box-shadow: 0 2px 8px rgba(233, 28, 36, 0.25);
+}
+
+html.light input[type='range']::-moz-range-thumb {
+  border-color: #FDF8F6;
+  box-shadow: 0 2px 8px rgba(233, 28, 36, 0.25);
 }
 
 /* -- Custom range / slider styling ------------------------------- */

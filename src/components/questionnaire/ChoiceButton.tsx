@@ -22,8 +22,8 @@ export default function ChoiceButton({
         group flex items-center gap-4 px-5 py-4 bg-bg-card rounded-xl transition-all duration-200 cursor-pointer hover:scale-[1.01] active:scale-[0.97]
         ${
           selected
-            ? "border-2 border-purina-red bg-hover-red-bg shadow-md shadow-purina-red/5"
-            : "border border-border-dark hover:border-purina-red/60 hover:shadow-sm hover:shadow-black/5"
+            ? "border-2 border-purina-red bg-hover-red-bg shadow-xl shadow-purina-red/15"
+            : "border border-border-dark shadow-lg shadow-black/20 hover:border-purina-red/60 hover:shadow-xl hover:shadow-black/15"
         }
       `}
     >
