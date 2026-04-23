@@ -71,10 +71,25 @@ export default function RecommendationCard({ rec, rank, onAddToCart }: Recommend
               <h3 className={`font-black text-purina-red ${isPrimary ? "text-2xl" : "text-lg"}`}>
                 {name}
               </h3>
-              <span className={`font-bold text-text-title ${isPrimary ? "text-xl" : "text-base"}`}>
-                &euro;{rec.product.price.toFixed(2)}
-              </span>
+              <div className="flex items-baseline gap-2">
+                <span className={`font-bold text-text-title ${isPrimary ? "text-xl" : "text-base"}`}>
+                  &euro;{(rec.product.price * 0.9).toFixed(2)}
+                </span>
+                <span className="text-text-muted text-xs line-through">
+                  &euro;{rec.product.price.toFixed(2)}
+                </span>
+              </div>
+              {isPrimary && (
+                <span className="bg-green-500/15 text-green-400 text-[10px] font-bold px-2 py-0.5 rounded-full border border-green-500/20">
+                  {t.discount.badge}
+                </span>
+              )}
             </div>
+            {isPrimary && (
+              <p className="text-green-400/80 text-[10px] mt-0.5 font-medium">
+                {t.discount.exclusive}
+              </p>
+            )}
 
             {/* Match Score Badge */}
             <div className="mt-3">

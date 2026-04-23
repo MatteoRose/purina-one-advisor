@@ -1,5 +1,5 @@
 "use client";
-
+/* Results page — includes FeedingPlan, WeekChallenge, ShareCard, 10% discount */
 import { useMemo, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
@@ -10,6 +10,9 @@ import { getRecommendation } from "@/lib/recommendation";
 import RecommendationCard from "@/components/results/RecommendationCard";
 import NutritionTable from "@/components/results/NutritionTable";
 import MiniProductCard from "@/components/results/MiniProductCard";
+import FeedingPlan from "@/components/results/FeedingPlan";
+import WeekChallenge from "@/components/results/WeekChallenge";
+import ShareCard from "@/components/results/ShareCard";
 
 export default function ResultsPage() {
   const router = useRouter();
@@ -173,6 +176,30 @@ export default function ResultsPage() {
             </div>
           </motion.div>
         )}
+
+        {/* Personalized Feeding Plan */}
+        <FeedingPlan
+          profile={profile}
+          dryProduct={primary.product}
+          wetProduct={primary.wet}
+          dosage={primary.dosage}
+          crossSell={result.crossSell}
+          onAddAllToCart={() => {
+            addToCart(primary.product.id);
+            if (primary.wet) addToCart(primary.wet.id);
+            result.crossSell.forEach((p) => addToCart(p.id));
+          }}
+        />
+
+        {/* 3 Week Challenge */}
+        <WeekChallenge />
+
+        {/* Shareable Results Card */}
+        <ShareCard
+          profile={profile}
+          product={primary.product}
+          matchScore={primary.matchScore}
+        />
 
         {/* Footer Navigation */}
         <div className="flex flex-col-reverse sm:flex-row justify-between items-center gap-4 mt-14 pt-6 border-t border-border-dark">
