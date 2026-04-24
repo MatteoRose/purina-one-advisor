@@ -1,16 +1,20 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAdvisorStore } from "@/stores/useAdvisorStore";
 import { useTranslation } from "@/i18n/config";
 import { loadChallenge, getTotalChecked, type ChallengeData } from "@/lib/challengeStore";
+import type { PetType } from "@/types";
 
 export default function HeroSection() {
   const router = useRouter();
   const { t } = useTranslation();
-  const { setName, goToStep, setLifestage, setActivity, toggleHealth, setWeight } = useAdvisorStore();
+  const { setName, setPetType, goToStep, setLifestage, setActivity, toggleHealth, setWeight } =
+    useAdvisorStore();
+  const [selectedPet, setSelectedPet] = useState<PetType | null>(null);
   const [inputName, setInputName] = useState("");
   const [focused, setFocused] = useState(false);
   const [shaking, setShaking] = useState(false);
@@ -25,7 +29,15 @@ export default function HeroSection() {
 
   const trimmedName = inputName.trim();
 
+  const handleSelectPet = (pet: PetType) => {
+    setSelectedPet(pet);
+    setPetType(pet);
+    // Focus the name input after a brief delay for animation
+    setTimeout(() => inputRef.current?.focus(), 400);
+  };
+
   const handleStart = () => {
+    if (!selectedPet) return;
     if (!trimmedName) {
       setShaking(true);
       inputRef.current?.focus();
@@ -40,8 +52,8 @@ export default function HeroSection() {
   const handleContinueChallenge = () => {
     if (!activeChallenge) return;
     const p = activeChallenge.profile;
-    // Restore the saved profile into the store
     setName(p.name);
+    if (p.petType) setPetType(p.petType);
     if (p.lifestage) setLifestage(p.lifestage);
     if (p.activity) setActivity(p.activity);
     p.health.forEach((h) => toggleHealth(h));
@@ -52,7 +64,7 @@ export default function HeroSection() {
 
   return (
     <section className="relative min-h-[calc(100vh-4rem)] flex flex-col items-center justify-center px-4 sm:px-6 overflow-hidden pb-16">
-      {/* ── Subtle hero glow — very light, matches global background ── */}
+      {/* ── Subtle hero glow ── */}
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
@@ -60,7 +72,6 @@ export default function HeroSection() {
             "radial-gradient(ellipse 100% 80% at 50% 40%, rgba(233,28,36,0.05) 0%, transparent 70%)",
         }}
       />
-      {/* Subtle grid pattern overlay */}
       <div
         className="absolute inset-0 pointer-events-none opacity-[0.03]"
         style={{
@@ -89,7 +100,7 @@ export default function HeroSection() {
         >
           <span className="text-purina-red font-black text-xs sm:text-sm tracking-wider">PURINA ONE</span>
           <span className="w-1.5 h-1.5 rounded-full bg-purina-red" />
-          <span className="text-text-muted text-[10px] sm:text-xs font-bold tracking-widest">MINI ADVISOR</span>
+          <span className="text-text-muted text-[10px] sm:text-xs font-bold tracking-widest">ADVISOR</span>
         </motion.div>
 
         {/* Main tagline */}
@@ -99,15 +110,15 @@ export default function HeroSection() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3, duration: 0.7 }}
         >
-          <span className="text-text-title">{t.hero.taglineStart ?? "Guided by "}</span>
+          <span className="text-text-title">{t.hero.taglineStart}</span>
           <span className="text-purina-red italic drop-shadow-[0_0_20px_rgba(233,28,36,0.3)]">
-            {t.hero.taglineHighlight ?? "Nutrition"}
+            {t.hero.taglineHighlight}
           </span>
           <span className="text-text-title">,</span>
           <br />
-          <span className="text-text-title">{t.hero.taglineEnd ?? "Led by "}</span>
+          <span className="text-text-title">{t.hero.taglineEnd}</span>
           <span className="text-purina-red italic drop-shadow-[0_0_20px_rgba(233,28,36,0.3)]">
-            {t.hero.taglineBrand ?? "Purina"}
+            {t.hero.taglineBrand}
           </span>
           <span className="text-text-title">.</span>
         </motion.h1>
@@ -124,9 +135,9 @@ export default function HeroSection() {
           <div className="h-px w-12 bg-gradient-to-l from-transparent to-purina-red/40" />
         </motion.div>
 
-        {/* Subtitle -- two lines */}
+        {/* Subtitle */}
         <motion.div
-          className="mb-8 sm:mb-12 max-w-xl mx-auto"
+          className="mb-8 sm:mb-10 max-w-xl mx-auto"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6 }}
@@ -153,7 +164,6 @@ export default function HeroSection() {
                 onClick={handleContinueChallenge}
                 className="w-full group relative overflow-hidden bg-gradient-to-r from-amber-600 to-amber-500 rounded-2xl p-4 text-left shadow-lg shadow-amber-500/15 hover:shadow-xl hover:shadow-amber-500/25 transition-shadow duration-300 active:scale-[0.98]"
               >
-                {/* Decorative circle */}
                 <div className="absolute -top-4 -right-4 w-20 h-20 rounded-full bg-white/5" />
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
@@ -161,10 +171,10 @@ export default function HeroSection() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-white font-black text-sm">
-                      {t.hero.welcomeBack ?? "Welcome back!"} &#x1F44B;
+                      {t.hero.welcomeBack} &#x1F44B;
                     </p>
                     <p className="text-white/70 text-[10px] truncate">
-                      {t.hero.continueChallenge ?? "Continue your 3-Week Challenge for"} {activeChallenge.profile.name}
+                      {t.hero.continueChallenge} {activeChallenge.profile.name}
                     </p>
                   </div>
                   <div className="text-white font-black text-sm">
@@ -177,53 +187,160 @@ export default function HeroSection() {
           )}
         </AnimatePresence>
 
-        {/* Name input section */}
+        {/* ═══════════════════════════════════════════════════════
+            PET SELECTION — Dog or Cat with cute images
+           ═══════════════════════════════════════════════════════ */}
         <motion.div
-          className="w-full max-w-sm sm:max-w-md mx-auto"
+          className="w-full max-w-sm sm:max-w-md mx-auto mb-6"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.8 }}
+          transition={{ delay: 0.7 }}
         >
-          <label className="text-text-muted text-xs sm:text-sm font-bold uppercase tracking-wider mb-3 block">
-            {t.hero.question}
+          <label className="text-text-muted text-xs sm:text-sm font-bold uppercase tracking-wider mb-4 block">
+            {t.petSelect.title}
           </label>
 
-          <div className={`relative rounded-2xl transition-shadow duration-300 ${shaking ? "animate-shake" : ""} ${
-            focused ? "shadow-[0_0_40px_rgba(233,28,36,0.18)]" : "shadow-lg shadow-black/10"
-          }`}>
-            <input
-              ref={inputRef}
-              type="text"
-              value={inputName}
-              onChange={(e) => setInputName(e.target.value)}
-              onFocus={() => setFocused(true)}
-              onBlur={() => setFocused(false)}
-              placeholder={t.hero.placeholder}
-              className="w-full bg-bg-card border-2 border-border-dark rounded-2xl px-5 sm:px-6 py-4 sm:py-5 text-xl sm:text-2xl text-center text-text-title placeholder-text-muted focus:border-purina-red focus:outline-none transition-all duration-200 font-bold"
-              onKeyDown={(e) => {
-                if (e.key === "Enter") handleStart();
-              }}
-            />
+          <div className="grid grid-cols-2 gap-4">
+            {/* Dog Card */}
+            <motion.button
+              onClick={() => handleSelectPet("dog")}
+              className={`relative rounded-2xl overflow-hidden border-2 transition-all duration-300 group ${
+                selectedPet === "dog"
+                  ? "border-purina-red shadow-lg shadow-purina-red/25 scale-[1.02]"
+                  : "border-border-dark hover:border-text-muted/50 shadow-md shadow-black/10"
+              }`}
+              whileHover={{ scale: selectedPet === "dog" ? 1.02 : 1.04 }}
+              whileTap={{ scale: 0.97 }}
+            >
+              <div className="bg-bg-card p-3 sm:p-4">
+                <div className="w-full aspect-square rounded-xl bg-bg-card-hover/60 flex items-center justify-center overflow-hidden mb-3">
+                  <Image
+                    src="/images/hero_dog.svg"
+                    alt="Dog"
+                    width={140}
+                    height={140}
+                    className="object-contain drop-shadow-md group-hover:scale-110 transition-transform duration-300"
+                  />
+                </div>
+                <p className={`font-black text-lg sm:text-xl transition-colors duration-200 ${
+                  selectedPet === "dog" ? "text-purina-red" : "text-text-title"
+                }`}>
+                  {t.petSelect.dog} &#x1F436;
+                </p>
+              </div>
+              {/* Selected indicator */}
+              <AnimatePresence>
+                {selectedPet === "dog" && (
+                  <motion.div
+                    className="absolute top-2 right-2 w-7 h-7 rounded-full bg-purina-red flex items-center justify-center"
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    exit={{ scale: 0 }}
+                    transition={{ type: "spring", stiffness: 400 }}
+                  >
+                    <span className="text-white text-sm font-bold">&#x2713;</span>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.button>
+
+            {/* Cat Card */}
+            <motion.button
+              onClick={() => handleSelectPet("cat")}
+              className={`relative rounded-2xl overflow-hidden border-2 transition-all duration-300 group ${
+                selectedPet === "cat"
+                  ? "border-purina-red shadow-lg shadow-purina-red/25 scale-[1.02]"
+                  : "border-border-dark hover:border-text-muted/50 shadow-md shadow-black/10"
+              }`}
+              whileHover={{ scale: selectedPet === "cat" ? 1.02 : 1.04 }}
+              whileTap={{ scale: 0.97 }}
+            >
+              <div className="bg-bg-card p-3 sm:p-4">
+                <div className="w-full aspect-square rounded-xl bg-bg-card-hover/60 flex items-center justify-center overflow-hidden mb-3">
+                  <Image
+                    src="/images/hero_cat.svg"
+                    alt="Cat"
+                    width={140}
+                    height={140}
+                    className="object-contain drop-shadow-md group-hover:scale-110 transition-transform duration-300"
+                  />
+                </div>
+                <p className={`font-black text-lg sm:text-xl transition-colors duration-200 ${
+                  selectedPet === "cat" ? "text-purina-red" : "text-text-title"
+                }`}>
+                  {t.petSelect.cat} &#x1F431;
+                </p>
+              </div>
+              <AnimatePresence>
+                {selectedPet === "cat" && (
+                  <motion.div
+                    className="absolute top-2 right-2 w-7 h-7 rounded-full bg-purina-red flex items-center justify-center"
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    exit={{ scale: 0 }}
+                    transition={{ type: "spring", stiffness: 400 }}
+                  >
+                    <span className="text-white text-sm font-bold">&#x2713;</span>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.button>
           </div>
         </motion.div>
 
-        {/* CTA Button */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1.0 }}
-        >
-          <button
-            onClick={handleStart}
-            className={`text-white font-bold text-base sm:text-lg py-4 px-10 sm:px-14 rounded-full mt-6 sm:mt-8 transition-all duration-300 tracking-wide active:scale-[0.97] ${
-              trimmedName
-                ? "bg-purina-red hover:bg-purina-red-hover cursor-pointer shadow-lg shadow-purina-red/30 hover:shadow-xl hover:shadow-purina-red/40 hover:scale-105"
-                : "bg-purina-red/80 cursor-pointer shadow-lg shadow-purina-red/20"
-            }`}
-          >
-            {t.hero.cta} &rarr;
-          </button>
-        </motion.div>
+        {/* ═══════════════════════════════════════════════════════
+            NAME INPUT — appears after pet is selected
+           ═══════════════════════════════════════════════════════ */}
+        <AnimatePresence>
+          {selectedPet && (
+            <motion.div
+              key="name-section"
+              initial={{ opacity: 0, y: 30, height: 0 }}
+              animate={{ opacity: 1, y: 0, height: "auto" }}
+              exit={{ opacity: 0, y: -20, height: 0 }}
+              transition={{ type: "spring", stiffness: 200, damping: 25 }}
+            >
+              {/* Name input */}
+              <div className="w-full max-w-sm sm:max-w-md mx-auto mt-2">
+                <label className="text-text-muted text-xs sm:text-sm font-bold uppercase tracking-wider mb-3 block">
+                  {t.hero.question}
+                </label>
+
+                <div className={`relative rounded-2xl transition-shadow duration-300 ${shaking ? "animate-shake" : ""} ${
+                  focused ? "shadow-[0_0_40px_rgba(233,28,36,0.18)]" : "shadow-lg shadow-black/10"
+                }`}>
+                  <input
+                    ref={inputRef}
+                    type="text"
+                    value={inputName}
+                    onChange={(e) => setInputName(e.target.value)}
+                    onFocus={() => setFocused(true)}
+                    onBlur={() => setFocused(false)}
+                    placeholder={t.hero.placeholder}
+                    className="w-full bg-bg-card border-2 border-border-dark rounded-2xl px-5 sm:px-6 py-4 sm:py-5 text-xl sm:text-2xl text-center text-text-title placeholder-text-muted focus:border-purina-red focus:outline-none transition-all duration-200 font-bold"
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") handleStart();
+                    }}
+                  />
+                </div>
+              </div>
+
+              {/* CTA Button */}
+              <div className="mt-6 sm:mt-8">
+                <button
+                  onClick={handleStart}
+                  className={`text-white font-bold text-base sm:text-lg py-4 px-10 sm:px-14 rounded-full transition-all duration-300 tracking-wide active:scale-[0.97] ${
+                    trimmedName
+                      ? "bg-purina-red hover:bg-purina-red-hover cursor-pointer shadow-lg shadow-purina-red/30 hover:shadow-xl hover:shadow-purina-red/40 hover:scale-105"
+                      : "bg-purina-red/80 cursor-pointer shadow-lg shadow-purina-red/20"
+                  }`}
+                >
+                  {t.hero.cta} &rarr;
+                </button>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Trust indicators */}
         <motion.div
@@ -234,17 +351,17 @@ export default function HeroSection() {
         >
           <span className="flex items-center gap-1.5">
             <span className="w-4 h-4 rounded-full bg-green-600/20 flex items-center justify-center text-green-500 text-[10px]">&#x2713;</span>
-            {t.hero.trust1 ?? "Science-backed formulas"}
+            {t.hero.trust1}
           </span>
           <span className="w-1 h-1 rounded-full bg-border-dark hidden sm:block" />
           <span className="flex items-center gap-1.5">
             <span className="w-4 h-4 rounded-full bg-green-600/20 flex items-center justify-center text-green-500 text-[10px]">&#x2713;</span>
-            {t.hero.trust2 ?? "Tailored to your dog"}
+            {t.hero.trust2}
           </span>
           <span className="w-1 h-1 rounded-full bg-border-dark hidden sm:block" />
           <span className="flex items-center gap-1.5">
             <span className="w-4 h-4 rounded-full bg-green-600/20 flex items-center justify-center text-green-500 text-[10px]">&#x2713;</span>
-            {t.hero.trust3 ?? "100% complete nutrition"}
+            {t.hero.trust3}
           </span>
         </motion.div>
       </div>

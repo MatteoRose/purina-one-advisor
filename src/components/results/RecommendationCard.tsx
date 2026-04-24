@@ -1,7 +1,8 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "@/i18n/config";
 import { ScoredRecommendation } from "@/types";
 import MatchScoreBadge from "./MatchScoreBadge";
@@ -14,12 +15,19 @@ interface RecommendationCardProps {
 
 export default function RecommendationCard({ rec, rank, onAddToCart }: RecommendationCardProps) {
   const { t, locale } = useTranslation();
+  const [discountUnlocked, setDiscountUnlocked] = useState(false);
 
   const name = locale === "it" ? rec.product.name : rec.product.nameEn;
   const desc = locale === "it" ? rec.product.desc : rec.product.descEn;
   const reasons = locale === "it" ? rec.reasonsIt : rec.reasons;
 
   const isPrimary = rank === 0;
+  const originalPrice = rec.product.price;
+  const discountedPrice = (originalPrice * 0.8).toFixed(2);
+
+  const handleUnlockDiscount = () => {
+    setDiscountUnlocked(true);
+  };
 
   return (
     <motion.div
@@ -71,75 +79,74 @@ export default function RecommendationCard({ rec, rank, onAddToCart }: Recommend
               {name}
             </h3>
 
-            {isPrimary ? (
-              <>
-                {/* Animated Price Reveal - primary only */}
-                <div className="flex items-center gap-3 mt-1">
-                  {/* Discounted price - springs in */}
-                  <motion.span
-                    className="font-black text-green-400 text-2xl"
-                    initial={{ opacity: 0, scale: 0.5 }}
+            {/* Price section */}
+            <div className="mt-1">
+              <AnimatePresence mode="wait">
+                {discountUnlocked ? (
+                  <motion.div
+                    key="discounted"
+                    initial={{ opacity: 0, scale: 0.8 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 0.8, type: "spring", stiffness: 200 }}
+                    transition={{ type: "spring", stiffness: 200 }}
                   >
-                    &euro;{(rec.product.price * 0.8).toFixed(2)}
-                  </motion.span>
-
-                  {/* Original price with animated strikethrough */}
-                  <span className="relative text-text-muted text-sm">
-                    &euro;{rec.product.price.toFixed(2)}
-                    <motion.span
-                      className="absolute left-0 top-1/2 w-full h-[2px] bg-purina-red rounded"
-                      initial={{ scaleX: 0 }}
-                      animate={{ scaleX: 1 }}
-                      transition={{ delay: 0.6, duration: 0.4 }}
-                      style={{ transformOrigin: "left" }}
-                    />
-                  </span>
-
-                  {/* Pulsing badge */}
-                  <motion.span
-                    className="bg-green-500/15 text-green-400 text-[11px] font-bold px-3 py-1 rounded-full border border-green-500/25"
-                    initial={{ opacity: 0, scale: 0 }}
-                    animate={{
-                      opacity: 1,
-                      scale: 1,
-                      boxShadow: [
-                        "0 0 0px rgba(34,197,94,0)",
-                        "0 0 15px rgba(34,197,94,0.3)",
-                        "0 0 0px rgba(34,197,94,0)",
-                      ],
-                    }}
-                    transition={{
-                      opacity: { delay: 1.0 },
-                      scale: { delay: 1.0, type: "spring" },
-                      boxShadow: { delay: 1.2, duration: 2, repeat: Infinity },
-                    }}
-                  >
-                    {t.discount.badge}
-                  </motion.span>
-                </div>
-
-                {/* Exclusive text fades in */}
-                <motion.p
-                  className="text-green-400/80 text-[10px] mt-1 font-medium"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 1.2 }}
-                >
-                  {t.discount.exclusive}
-                </motion.p>
-              </>
-            ) : (
-              <div className="flex items-baseline gap-2">
-                <span className="font-bold text-text-title text-base">
-                  &euro;{(rec.product.price * 0.8).toFixed(2)}
-                </span>
-                <span className="text-text-muted text-xs line-through">
-                  &euro;{rec.product.price.toFixed(2)}
-                </span>
-              </div>
-            )}
+                    <div className="flex items-center gap-3">
+                      <motion.span
+                        className={`font-black text-green-400 ${isPrimary ? "text-2xl" : "text-lg"}`}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.1, type: "spring" }}
+                      >
+                        &euro;{discountedPrice}
+                      </motion.span>
+                      <span className="relative text-text-muted text-sm">
+                        &euro;{originalPrice.toFixed(2)}
+                        <motion.span
+                          className="absolute left-0 top-1/2 w-full h-[2px] bg-purina-red rounded"
+                          initial={{ scaleX: 0 }}
+                          animate={{ scaleX: 1 }}
+                          transition={{ delay: 0.2, duration: 0.3 }}
+                          style={{ transformOrigin: "left" }}
+                        />
+                      </span>
+                      <motion.span
+                        className="bg-green-500/15 text-green-400 text-[11px] font-bold px-3 py-1 rounded-full border border-green-500/25"
+                        initial={{ opacity: 0, scale: 0 }}
+                        animate={{
+                          opacity: 1,
+                          scale: 1,
+                          boxShadow: [
+                            "0 0 0px rgba(34,197,94,0)",
+                            "0 0 15px rgba(34,197,94,0.3)",
+                            "0 0 0px rgba(34,197,94,0)",
+                          ],
+                        }}
+                        transition={{
+                          opacity: { delay: 0.3 },
+                          scale: { delay: 0.3, type: "spring" },
+                          boxShadow: { delay: 0.5, duration: 2, repeat: Infinity },
+                        }}
+                      >
+                        {t.discount.badge}
+                      </motion.span>
+                    </div>
+                    <motion.p
+                      className="text-green-400/80 text-[10px] mt-1 font-medium"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 0.4 }}
+                    >
+                      &#x2713; {t.discount.exclusive}
+                    </motion.p>
+                  </motion.div>
+                ) : (
+                  <motion.div key="original" exit={{ opacity: 0, scale: 0.8 }}>
+                    <span className={`font-bold text-text-title ${isPrimary ? "text-xl" : "text-base"}`}>
+                      &euro;{originalPrice.toFixed(2)}
+                    </span>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
 
             {/* Match Score Badge */}
             <div className="mt-3">
@@ -169,10 +176,35 @@ export default function RecommendationCard({ rec, rank, onAddToCart }: Recommend
               </div>
             )}
 
+            {/* Unlock Discount Button */}
+            {!discountUnlocked && (
+              <motion.button
+                onClick={handleUnlockDiscount}
+                className={`mt-4 w-full relative overflow-hidden rounded-xl font-bold transition-all duration-200 active:scale-[0.97] ${
+                  isPrimary
+                    ? "bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-white py-3.5 px-6 text-sm shadow-lg shadow-amber-500/20 hover:shadow-xl hover:shadow-amber-500/30"
+                    : "bg-gradient-to-r from-amber-500/80 to-orange-500/80 hover:from-amber-400 hover:to-orange-400 text-white py-2.5 px-5 text-xs shadow-md shadow-amber-500/15"
+                }`}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.97 }}
+              >
+                <span className="relative z-10 flex items-center justify-center gap-2">
+                  <span className={isPrimary ? "text-lg" : "text-base"}>&#x1F381;</span>
+                  <span>{t.discount.unlock}</span>
+                </span>
+                {/* Shimmer effect */}
+                <motion.div
+                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
+                  animate={{ x: ["-100%", "200%"] }}
+                  transition={{ duration: 2, repeat: Infinity, repeatDelay: 1 }}
+                />
+              </motion.button>
+            )}
+
             {/* Add to Cart */}
             <button
               onClick={onAddToCart}
-              className={`mt-4 bg-purina-red text-white font-bold rounded-full hover:bg-purina-red-hover transition-all duration-200 hover:shadow-lg hover:shadow-purina-red/20 active:scale-[0.97] ${
+              className={`${discountUnlocked ? "mt-3" : "mt-2"} bg-purina-red text-white font-bold rounded-full hover:bg-purina-red-hover transition-all duration-200 hover:shadow-lg hover:shadow-purina-red/20 active:scale-[0.97] ${
                 isPrimary ? "py-3 px-8 text-sm" : "py-2 px-5 text-xs"
               }`}
             >

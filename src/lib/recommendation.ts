@@ -2,11 +2,18 @@ import { DogProfile, Product, RecommendationResult, ScoredRecommendation, MatchE
 import { PRODUCTS, PRODUCTS_MAP } from './products';
 import { calculateDosage } from './dosage';
 
-/** Critical health-to-product mappings that get a priority boost */
-const PRIORITY_HEALTH_MAP: Record<string, string> = {
+/** Critical health-to-product mappings that get a priority boost (dog) */
+const PRIORITY_HEALTH_MAP_DOG: Record<string, string> = {
   'Intolleranze': 'monoprotein_turkey',
   'Controllo del peso': 'weight_turkey',
   'Pelle & Pelo': 'delicate_salmon',
+};
+
+/** Critical health-to-product mappings that get a priority boost (cat) */
+const PRIORITY_HEALTH_MAP_CAT: Record<string, string> = {
+  'Controllo del peso': 'cat_sterilcat_turkey',
+  'Digestione sensibile': 'cat_delicate_turkey',
+  'Pelle & Pelo': 'cat_indoor_turkey',
 };
 
 /** Reason templates keyed by match type */
@@ -22,6 +29,19 @@ const REASON_TEMPLATES: Record<string, { en: string; it: string }> = {
   lifestage_senior: {
     en: 'Supports cardiac function and joints',
     it: 'Supporta la funzione cardiaca e le articolazioni',
+  },
+  // Cat-specific lifestage reasons
+  cat_lifestage_junior: {
+    en: 'Supports healthy growth in kittens',
+    it: 'Supporta una crescita sana nei gattini',
+  },
+  cat_lifestage_adult: {
+    en: 'Balanced nutrition for adult cats',
+    it: 'Nutrizione bilanciata per gatti adulti',
+  },
+  cat_lifestage_senior: {
+    en: 'Supports vitality and natural defenses',
+    it: 'Supporta la vitalit\u00e0 e le difese naturali',
   },
   activity_high: {
     en: 'High energy for active dogs',
@@ -78,6 +98,9 @@ function scoreProduct(product: Product, profile: DogProfile): ScoredProduct {
   const criteria = product.criteria;
   if (!criteria) return { product, score: 0, maxScore: 0, reasons: [], reasonsIt: [], explanations: [] };
 
+  const isCat = profile.petType === 'cat';
+  const priorityMap = isCat ? PRIORITY_HEALTH_MAP_CAT : PRIORITY_HEALTH_MAP_DOG;
+
   let score = 0;
   let maxScore = 0;
   const reasons: string[] = [];
@@ -89,8 +112,9 @@ function scoreProduct(product: Product, profile: DogProfile): ScoredProduct {
   const lifestageMatched = !!(profile.lifestage && criteria.lifestage === profile.lifestage);
   if (lifestageMatched) {
     score += 10;
-    const key = `lifestage_${profile.lifestage!.toLowerCase()}`;
-    const tmpl = REASON_TEMPLATES[key];
+    const prefix = isCat ? 'cat_' : '';
+    const key = `${prefix}lifestage_${profile.lifestage!.toLowerCase()}`;
+    const tmpl = REASON_TEMPLATES[key] ?? REASON_TEMPLATES[`lifestage_${profile.lifestage!.toLowerCase()}`];
     if (tmpl) {
       reasons.push(tmpl.en);
       reasonsIt.push(tmpl.it);
@@ -148,7 +172,7 @@ function scoreProduct(product: Product, profile: DogProfile): ScoredProduct {
 
       // Priority boost for critical health matches
       for (const h of matchedHealth) {
-        const priorityProductId = PRIORITY_HEALTH_MAP[h];
+        const priorityProductId = priorityMap[h];
         if (priorityProductId && product.id === priorityProductId) {
           score += 20;
           maxScore += 20;
@@ -194,7 +218,12 @@ function toDisplayScore(rawRatio: number, rank: number): number {
 }
 
 export function getRecommendation(profile: DogProfile): RecommendationResult {
-  const dryProducts = PRODUCTS.filter(p => p.type === 'dry');
+  const isCat = profile.petType === 'cat';
+  // Filter products by pet type: cat products have IDs starting with "cat_"
+  const petProducts = PRODUCTS.filter(p =>
+    isCat ? p.id.startsWith('cat_') : !p.id.startsWith('cat_')
+  );
+  const dryProducts = petProducts.filter(p => p.type === 'dry');
   const scored = dryProducts.map(product => scoreProduct(product, profile));
   scored.sort((a, b) => b.score - a.score);
 
@@ -234,12 +263,17 @@ export function getRecommendation(profile: DogProfile): RecommendationResult {
 
   // Cross-sell products
   const crossSell: Product[] = [];
-  if (profile.weight >= 7) {
-    const dentalife = PRODUCTS_MAP['dentalife_small'];
-    if (dentalife) crossSell.push(dentalife);
+  if (isCat) {
+    const catSnack = PRODUCTS_MAP['cat_snack_treats'];
+    if (catSnack) crossSell.push(catSnack);
+  } else {
+    if (profile.weight >= 7) {
+      const dentalife = PRODUCTS_MAP['dentalife_small'];
+      if (dentalife) crossSell.push(dentalife);
+    }
+    const adventuros = PRODUCTS_MAP['adventuros_nuggets'];
+    if (adventuros) crossSell.push(adventuros);
   }
-  const adventuros = PRODUCTS_MAP['adventuros_nuggets'];
-  if (adventuros) crossSell.push(adventuros);
 
   return { recommendations, crossSell };
 }

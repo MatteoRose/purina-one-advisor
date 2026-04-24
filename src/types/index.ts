@@ -21,7 +21,10 @@ export interface Product {
   pairing?: string;
 }
 
+export type PetType = 'dog' | 'cat';
+
 export interface DogProfile {
+  petType: PetType;
   name: string;
   lifestage: Lifestage | null;
   activity: Activity | null;

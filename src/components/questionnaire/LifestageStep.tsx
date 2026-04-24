@@ -4,15 +4,28 @@ import { useTranslation } from "@/i18n/config";
 import InteractiveCard from "./InteractiveCard";
 import type { Lifestage } from "@/types";
 
-const lifestages: { value: Lifestage; image: string }[] = [
+const dogLifestages: { value: Lifestage; image: string }[] = [
   { value: "Junior", image: "/images/cucciolo.png" },
   { value: "Adult", image: "/images/adulto.png" },
   { value: "Senior", image: "/images/senior.png" },
 ];
 
+const catLifestages: { value: Lifestage; image: string }[] = [
+  { value: "Junior", image: "/images/cat_secco_junior.jpg" },
+  { value: "Adult", image: "/images/cat_secco_adult.jpg" },
+  { value: "Senior", image: "/images/cat_secco_senior.jpg" },
+];
+
 export default function LifestageStep() {
   const { profile, setLifestage, nextStep } = useAdvisorStore();
   const { t, interpolate } = useTranslation();
+
+  const isCat = profile.petType === "cat";
+  const lifestages = isCat ? catLifestages : dogLifestages;
+  const lifestageLabels = isCat ? t.catLifestages : t.lifestages;
+  const defaultName = isCat
+    ? t.hero.defaultCatName
+    : t.hero.defaultDogName;
 
   return (
     <div>
@@ -24,7 +37,7 @@ export default function LifestageStep() {
       {/* Title */}
       <h2 className="text-2xl sm:text-3xl font-black text-text-title mb-2">
         {interpolate(t.steps.step1Title, {
-          name: (profile.name || t.hero.defaultName).toUpperCase(),
+          name: (profile.name || defaultName).toUpperCase(),
         })}
       </h2>
 
@@ -37,8 +50,8 @@ export default function LifestageStep() {
           <InteractiveCard
             key={value}
             imageSrc={image}
-            title={t.lifestages[value].title}
-            subtitle={t.lifestages[value].sub}
+            title={lifestageLabels[value].title}
+            subtitle={lifestageLabels[value].sub}
             selected={profile.lifestage === value}
             onClick={() => setLifestage(value)}
           />

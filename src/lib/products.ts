@@ -158,6 +158,118 @@ export const PRODUCTS: Product[] = [
     img: "/images/adventuros.jpg",
     price: 2.90,
   },
+
+  // ══════════════════════════════════════════════════════════════════
+  //  CAT PRODUCTS — Purina ONE Gatto
+  // ══════════════════════════════════════════════════════════════════
+
+  // Cat Dry food
+  {
+    id: "cat_adult_chicken",
+    name: "ONE Gatto Adult \u2013 Pollo",
+    nameEn: "ONE Cat Adult \u2013 Chicken",
+    type: "dry",
+    desc: "Ricco in Pollo. Nutrizione completa per gatti adulti con formula bifensis per difese naturali.",
+    descEn: "Rich in Chicken. Complete nutrition for adult cats with bifensis formula for natural defenses.",
+    img: "/images/cat_secco_adult.jpg",
+    price: 5.90,
+    criteria: { lifestage: "Adult", health: ["Nessuno", "Appetito difficile"] },
+    pairing: "cat_adult_wet",
+  },
+  {
+    id: "cat_sterilcat_turkey",
+    name: "ONE Gatto Sterilcat \u2013 Tacchino",
+    nameEn: "ONE Cat Sterilcat \u2013 Turkey",
+    type: "dry",
+    desc: "Ricco in Tacchino. Formula specifica per gatti sterilizzati, aiuta a mantenere il peso forma.",
+    descEn: "Rich in Turkey. Specific formula for sterilized cats, helps maintain ideal body weight.",
+    img: "/images/cat_secco_sterilcat.jpg",
+    price: 6.50,
+    criteria: { lifestage: "Adult", activity: ["Sedentario", "Normale"], health: ["Controllo del peso", "Nessuno"] },
+    pairing: "cat_adult_wet",
+  },
+  {
+    id: "cat_junior_chicken",
+    name: "ONE Gatto Junior \u2013 Pollo",
+    nameEn: "ONE Cat Junior \u2013 Chicken",
+    type: "dry",
+    desc: "Ricco in Pollo. Supporta la crescita sana dei gattini con DHA per lo sviluppo cerebrale.",
+    descEn: "Rich in Chicken. Supports healthy growth of kittens with DHA for brain development.",
+    img: "/images/cat_secco_junior.jpg",
+    price: 6.20,
+    criteria: { lifestage: "Junior", health: ["Nessuno", "Digestione sensibile"] },
+    pairing: "cat_adult_wet",
+  },
+  {
+    id: "cat_senior_chicken",
+    name: "ONE Gatto Senior 7+ \u2013 Pollo",
+    nameEn: "ONE Cat Senior 7+ \u2013 Chicken",
+    type: "dry",
+    desc: "Ricco in Pollo. Formulato per gatti oltre i 7 anni per supportare la vitalit\u00e0 e le difese.",
+    descEn: "Rich in Chicken. Formulated for cats over 7 years to support vitality and defenses.",
+    img: "/images/cat_secco_senior.jpg",
+    price: 6.50,
+    criteria: { lifestage: "Senior", health: ["Nessuno", "Controllo del peso"] },
+    pairing: "cat_senior_wet",
+  },
+  {
+    id: "cat_delicate_turkey",
+    name: "ONE Gatto Sensitive \u2013 Tacchino",
+    nameEn: "ONE Cat Sensitive \u2013 Turkey",
+    type: "dry",
+    desc: "Ricco in Tacchino. Per gatti con digestione sensibile, altamente digeribile e delicato.",
+    descEn: "Rich in Turkey. For cats with sensitive digestion, highly digestible and gentle.",
+    img: "/images/cat_secco_delicate.jpg",
+    price: 6.90,
+    criteria: { lifestage: "Adult", health: ["Digestione sensibile", "Pelle & Pelo"] },
+    pairing: "cat_adult_wet",
+  },
+  {
+    id: "cat_indoor_turkey",
+    name: "ONE Gatto Indoor \u2013 Tacchino",
+    nameEn: "ONE Cat Indoor \u2013 Turkey",
+    type: "dry",
+    desc: "Ricco in Tacchino. Formulato per gatti da interno, controlla le palle di pelo e il peso.",
+    descEn: "Rich in Turkey. Formulated for indoor cats, controls hairballs and weight.",
+    img: "/images/cat_secco_indoor.jpg",
+    price: 6.20,
+    criteria: { lifestage: "Adult", activity: ["Sedentario"], health: ["Controllo del peso", "Pelle & Pelo"] },
+    pairing: "cat_adult_wet",
+  },
+
+  // Cat Wet food
+  {
+    id: "cat_adult_wet",
+    name: "ONE Gatto Umido Adult",
+    nameEn: "ONE Cat Wet Adult",
+    type: "wet",
+    desc: "Bocconcini in salsa per gatti adulti. Altamente digeribili e ricchi di gusto.",
+    descEn: "Chunks in sauce for adult cats. Highly digestible and full of flavor.",
+    img: "/images/cat_umido_adult.jpg",
+    price: 3.50,
+  },
+  {
+    id: "cat_senior_wet",
+    name: "ONE Gatto Umido Senior",
+    nameEn: "ONE Cat Wet Senior",
+    type: "wet",
+    desc: "Bocconcini morbidi per gatti senior, arricchiti con vitamine per la vitalit\u00e0.",
+    descEn: "Soft chunks for senior cats, enriched with vitamins for vitality.",
+    img: "/images/cat_umido_senior.jpg",
+    price: 3.80,
+  },
+
+  // Cat Snacks
+  {
+    id: "cat_snack_treats",
+    name: "ONE Gatto Snack Croccanti",
+    nameEn: "ONE Cat Crunchy Treats",
+    type: "snack",
+    desc: "Snack croccanti fuori, morbidi dentro. Irresistibili per ogni gatto.",
+    descEn: "Crunchy outside, soft inside treats. Irresistible for every cat.",
+    img: "/images/cat_snack.jpg",
+    price: 2.50,
+  },
 ];
 
 export const PRODUCTS_MAP: Record<string, Product> = Object.fromEntries(
