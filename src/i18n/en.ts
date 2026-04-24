@@ -20,6 +20,8 @@ export const en = {
     trust1: "Science-backed formulas",
     trust2: "Tailored to your dog",
     trust3: "100% complete nutrition",
+    welcomeBack: "Welcome back!",
+    continueChallenge: "Continue your 3-Week Challenge for",
   },
   progress: {
     step1: "Life Stage",
@@ -131,6 +133,11 @@ export const en = {
     ctaButton: "Start the Challenge",
     title: "3-WEEK CHALLENGE",
     subtitle: "Track the visible difference",
+    dayLabel: "Day",
+    weekLabel: "Week",
+    week1Short: "Energy",
+    week2Short: "Digestion",
+    week3Short: "Coat",
     week1Title: "Week 1 — Energy & Vitality",
     week1Items: [
       "More eager at mealtimes",
@@ -149,7 +156,11 @@ export const en = {
       "Brighter, clearer eyes",
       "Healthier skin, less scratching",
     ],
+    weekComplete: "Week complete! Amazing progress!",
     complete: "Challenge Complete! You've seen the Purina ONE difference!",
+    completeSubtext: "Your dog is thriving with Purina ONE!",
+    remindMe: "Remind me to check back",
+    notificationSet: "We'll remind you to check your dog's progress!",
   },
   shareCard: {
     label: "PERFECT NUTRITION MATCH",
@@ -160,7 +171,7 @@ export const en = {
     shareText: "{name} got a {score}% nutrition match with {product}! Find your dog's perfect food at",
   },
   discount: {
-    badge: "10% OFF",
+    badge: "20% OFF",
     original: "was",
     exclusive: "Exclusive app discount applied!",
   },

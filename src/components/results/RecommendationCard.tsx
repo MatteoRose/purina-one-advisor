@@ -66,29 +66,79 @@ export default function RecommendationCard({ rec, rank, onAddToCart }: Recommend
           </div>
 
           <div className="flex-1 min-w-0">
-            {/* Name + Price row */}
-            <div className="flex items-baseline gap-3 flex-wrap">
-              <h3 className={`font-black text-purina-red ${isPrimary ? "text-2xl" : "text-lg"}`}>
-                {name}
-              </h3>
+            {/* Name */}
+            <h3 className={`font-black text-purina-red ${isPrimary ? "text-2xl" : "text-lg"}`}>
+              {name}
+            </h3>
+
+            {isPrimary ? (
+              <>
+                {/* Animated Price Reveal - primary only */}
+                <div className="flex items-center gap-3 mt-1">
+                  {/* Discounted price - springs in */}
+                  <motion.span
+                    className="font-black text-green-400 text-2xl"
+                    initial={{ opacity: 0, scale: 0.5 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 0.8, type: "spring", stiffness: 200 }}
+                  >
+                    &euro;{(rec.product.price * 0.8).toFixed(2)}
+                  </motion.span>
+
+                  {/* Original price with animated strikethrough */}
+                  <span className="relative text-text-muted text-sm">
+                    &euro;{rec.product.price.toFixed(2)}
+                    <motion.span
+                      className="absolute left-0 top-1/2 w-full h-[2px] bg-purina-red rounded"
+                      initial={{ scaleX: 0 }}
+                      animate={{ scaleX: 1 }}
+                      transition={{ delay: 0.6, duration: 0.4 }}
+                      style={{ transformOrigin: "left" }}
+                    />
+                  </span>
+
+                  {/* Pulsing badge */}
+                  <motion.span
+                    className="bg-green-500/15 text-green-400 text-[11px] font-bold px-3 py-1 rounded-full border border-green-500/25"
+                    initial={{ opacity: 0, scale: 0 }}
+                    animate={{
+                      opacity: 1,
+                      scale: 1,
+                      boxShadow: [
+                        "0 0 0px rgba(34,197,94,0)",
+                        "0 0 15px rgba(34,197,94,0.3)",
+                        "0 0 0px rgba(34,197,94,0)",
+                      ],
+                    }}
+                    transition={{
+                      opacity: { delay: 1.0 },
+                      scale: { delay: 1.0, type: "spring" },
+                      boxShadow: { delay: 1.2, duration: 2, repeat: Infinity },
+                    }}
+                  >
+                    {t.discount.badge}
+                  </motion.span>
+                </div>
+
+                {/* Exclusive text fades in */}
+                <motion.p
+                  className="text-green-400/80 text-[10px] mt-1 font-medium"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 1.2 }}
+                >
+                  {t.discount.exclusive}
+                </motion.p>
+              </>
+            ) : (
               <div className="flex items-baseline gap-2">
-                <span className={`font-bold text-text-title ${isPrimary ? "text-xl" : "text-base"}`}>
-                  &euro;{(rec.product.price * 0.9).toFixed(2)}
+                <span className="font-bold text-text-title text-base">
+                  &euro;{(rec.product.price * 0.8).toFixed(2)}
                 </span>
                 <span className="text-text-muted text-xs line-through">
                   &euro;{rec.product.price.toFixed(2)}
                 </span>
               </div>
-              {isPrimary && (
-                <span className="bg-green-500/15 text-green-400 text-[10px] font-bold px-2 py-0.5 rounded-full border border-green-500/20">
-                  {t.discount.badge}
-                </span>
-              )}
-            </div>
-            {isPrimary && (
-              <p className="text-green-400/80 text-[10px] mt-0.5 font-medium">
-                {t.discount.exclusive}
-              </p>
             )}
 
             {/* Match Score Badge */}
