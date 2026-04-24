@@ -192,7 +192,7 @@ export default function ResultsPage() {
         />
 
         {/* 3 Week Challenge */}
-        <WeekChallenge />
+        <WeekChallenge product={primary.product} matchScore={primary.matchScore} />
 
         {/* Shareable Results Card */}
         <ShareCard

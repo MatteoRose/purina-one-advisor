@@ -20,6 +20,8 @@ export const it = {
     trust1: "Formule scientifiche",
     trust2: "Su misura per il tuo cane",
     trust3: "Nutrizione 100% completa",
+    welcomeBack: "Bentornato!",
+    continueChallenge: "Continua la Sfida delle 3 Settimane per",
   },
   progress: {
     step1: "Fase di Vita",
@@ -131,6 +133,11 @@ export const it = {
     ctaButton: "Inizia la Sfida",
     title: "SFIDA 3 SETTIMANE",
     subtitle: "Monitora la differenza visibile",
+    dayLabel: "Giorno",
+    weekLabel: "Sett.",
+    week1Short: "Energia",
+    week2Short: "Digestione",
+    week3Short: "Pelo",
     week1Title: "Settimana 1 — Energia & Vitalità",
     week1Items: [
       "Più entusiasta ai pasti",
@@ -149,7 +156,11 @@ export const it = {
       "Occhi più luminosi e limpidi",
       "Pelle più sana, meno prurito",
     ],
+    weekComplete: "Settimana completata! Progressi fantastici!",
     complete: "Sfida Completata! Hai visto la differenza Purina ONE!",
+    completeSubtext: "Il tuo cane sta prosperando con Purina ONE!",
+    remindMe: "Ricordami di controllare",
+    notificationSet: "Ti ricorderemo di controllare i progressi del tuo cane!",
   },
   shareCard: {
     label: "ABBINAMENTO NUTRIZIONALE PERFETTO",
@@ -160,7 +171,7 @@ export const it = {
     shareText: "{name} ha ottenuto un match del {score}% con {product}! Trova il cibo perfetto per il tuo cane su",
   },
   discount: {
-    badge: "-10%",
+    badge: "-20%",
     original: "era",
     exclusive: "Sconto esclusivo app applicato!",
   },

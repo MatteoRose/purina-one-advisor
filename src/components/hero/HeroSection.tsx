@@ -1,19 +1,27 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useAdvisorStore } from "@/stores/useAdvisorStore";
 import { useTranslation } from "@/i18n/config";
+import { loadChallenge, getTotalChecked, type ChallengeData } from "@/lib/challengeStore";
 
 export default function HeroSection() {
   const router = useRouter();
   const { t } = useTranslation();
-  const { setName, goToStep } = useAdvisorStore();
+  const { setName, goToStep, setLifestage, setActivity, toggleHealth, setWeight } = useAdvisorStore();
   const [inputName, setInputName] = useState("");
   const [focused, setFocused] = useState(false);
   const [shaking, setShaking] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const [activeChallenge, setActiveChallenge] = useState<ChallengeData | null>(null);
+
+  // Detect returning challenger
+  useEffect(() => {
+    const data = loadChallenge();
+    if (data && data.started) setActiveChallenge(data);
+  }, []);
 
   const trimmedName = inputName.trim();
 
@@ -27,6 +35,19 @@ export default function HeroSection() {
     setName(trimmedName);
     goToStep(1);
     router.push("/questionnaire");
+  };
+
+  const handleContinueChallenge = () => {
+    if (!activeChallenge) return;
+    const p = activeChallenge.profile;
+    // Restore the saved profile into the store
+    setName(p.name);
+    if (p.lifestage) setLifestage(p.lifestage);
+    if (p.activity) setActivity(p.activity);
+    p.health.forEach((h) => toggleHealth(h));
+    setWeight(p.weight);
+    goToStep(4);
+    router.push("/results");
   };
 
   return (
@@ -117,6 +138,44 @@ export default function HeroSection() {
             {t.hero.subtitleAccent}
           </p>
         </motion.div>
+
+        {/* Continue Challenge Banner (for returning visitors) */}
+        <AnimatePresence>
+          {activeChallenge && (
+            <motion.div
+              className="w-full max-w-sm sm:max-w-md mx-auto mb-6"
+              initial={{ opacity: 0, y: 20, height: 0 }}
+              animate={{ opacity: 1, y: 0, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ delay: 0.5 }}
+            >
+              <button
+                onClick={handleContinueChallenge}
+                className="w-full group relative overflow-hidden bg-gradient-to-r from-amber-600 to-amber-500 rounded-2xl p-4 text-left shadow-lg shadow-amber-500/15 hover:shadow-xl hover:shadow-amber-500/25 transition-shadow duration-300 active:scale-[0.98]"
+              >
+                {/* Decorative circle */}
+                <div className="absolute -top-4 -right-4 w-20 h-20 rounded-full bg-white/5" />
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
+                    <span className="text-lg">&#x1F3AF;</span>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-white font-black text-sm">
+                      {t.hero.welcomeBack ?? "Welcome back!"} &#x1F44B;
+                    </p>
+                    <p className="text-white/70 text-[10px] truncate">
+                      {t.hero.continueChallenge ?? "Continue your 3-Week Challenge for"} {activeChallenge.profile.name}
+                    </p>
+                  </div>
+                  <div className="text-white font-black text-sm">
+                    {Math.round((getTotalChecked(activeChallenge.checks) / 9) * 100)}%
+                  </div>
+                  <span className="text-white/60 text-lg group-hover:translate-x-1 transition-transform">&#x2192;</span>
+                </div>
+              </button>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Name input section */}
         <motion.div
