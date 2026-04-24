@@ -1,0 +1,116 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="300" height="300">
+  <defs>
+    <radialGradient id="bg_hero_cat" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#FFF3E0;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FFE0B2;stop-opacity:1" />
+    </radialGradient>
+    <radialGradient id="fur_main" cx="50%" cy="40%" r="50%">
+      <stop offset="0%" style="stop-color:#F5E6D3;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#D4A574;stop-opacity:1" />
+    </radialGradient>
+    <radialGradient id="fur_light" cx="50%" cy="40%" r="45%">
+      <stop offset="0%" style="stop-color:#FFF8F0;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#F5E6D3;stop-opacity:1" />
+    </radialGradient>
+    <filter id="soft_shadow">
+      <feDropShadow dx="0" dy="3" stdDeviation="5" flood-opacity="0.15"/>
+    </filter>
+    <filter id="fur_texture">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="4" result="noise"/>
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="1.5" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+  </defs>
+  <!-- Background circle -->
+  <circle cx="150" cy="150" r="145" fill="url(#bg_hero_cat)"/>
+  <circle cx="150" cy="150" r="140" fill="none" stroke="#E91C24" stroke-width="3" opacity="0.3"/>
+  <!-- Persian cat face - fluffy and round -->
+  <g transform="translate(150,155)" filter="url(#soft_shadow)">
+    <!-- Fluffy fur outline - multiple overlapping circles for fluffy effect -->
+    <!-- Outer fluff -->
+    <circle cx="-50" cy="10" r="28" fill="#D4A574" opacity="0.7"/>
+    <circle cx="-45" cy="-15" r="25" fill="#D4A574" opacity="0.7"/>
+    <circle cx="-35" cy="-35" r="22" fill="#D4A574" opacity="0.7"/>
+    <circle cx="50" cy="10" r="28" fill="#D4A574" opacity="0.7"/>
+    <circle cx="45" cy="-15" r="25" fill="#D4A574" opacity="0.7"/>
+    <circle cx="35" cy="-35" r="22" fill="#D4A574" opacity="0.7"/>
+    <circle cx="-20" cy="40" r="24" fill="#D4A574" opacity="0.7"/>
+    <circle cx="20" cy="40" r="24" fill="#D4A574" opacity="0.7"/>
+    <circle cx="0" cy="45" r="22" fill="#D4A574" opacity="0.7"/>
+    <!-- Main face shape -->
+    <ellipse cx="0" cy="5" rx="58" ry="55" fill="url(#fur_main)"/>
+    <!-- Inner lighter face -->
+    <ellipse cx="0" cy="10" rx="42" ry="40" fill="url(#fur_light)"/>
+    <!-- Ears -->
+    <polygon points="-38,-42 -48,-80 -22,-52" fill="#D4A574"/>
+    <polygon points="38,-42 48,-80 22,-52" fill="#D4A574"/>
+    <!-- Inner ears -->
+    <polygon points="-36,-44 -44,-72 -24,-50" fill="#F8C8B8"/>
+    <polygon points="36,-44 44,-72 24,-50" fill="#F8C8B8"/>
+    <!-- Ear tufts -->
+    <path d="M -42,-60 Q -38,-55 -34,-58" fill="none" stroke="#C49A6C" stroke-width="1.5"/>
+    <path d="M 42,-60 Q 38,-55 34,-58" fill="none" stroke="#C49A6C" stroke-width="1.5"/>
+    <!-- Fluffy cheeks -->
+    <circle cx="-35" cy="15" r="18" fill="#F5E6D3" opacity="0.8"/>
+    <circle cx="35" cy="15" r="18" fill="#F5E6D3" opacity="0.8"/>
+    <!-- Eyes -->
+    <g>
+      <!-- Eye whites -->
+      <ellipse cx="-18" cy="-8" rx="14" ry="13" fill="#fff"/>
+      <ellipse cx="18" cy="-8" rx="14" ry="13" fill="#fff"/>
+      <!-- Irises - amber/golden for Persian -->
+      <ellipse cx="-18" cy="-7" rx="10" ry="11" fill="#D4890A"/>
+      <ellipse cx="18" cy="-7" rx="10" ry="11" fill="#D4890A"/>
+      <!-- Inner iris gradient -->
+      <ellipse cx="-18" cy="-7" rx="7" ry="8" fill="#E8A317"/>
+      <ellipse cx="18" cy="-7" rx="7" ry="8" fill="#E8A317"/>
+      <!-- Pupils -->
+      <ellipse cx="-18" cy="-7" rx="5" ry="7" fill="#1a1a1a"/>
+      <ellipse cx="18" cy="-7" rx="5" ry="7" fill="#1a1a1a"/>
+      <!-- Eye highlights -->
+      <circle cx="-14" cy="-12" r="3.5" fill="#fff" opacity="0.9"/>
+      <circle cx="22" cy="-12" r="3.5" fill="#fff" opacity="0.9"/>
+      <circle cx="-20" cy="-3" r="2" fill="#fff" opacity="0.4"/>
+      <circle cx="16" cy="-3" r="2" fill="#fff" opacity="0.4"/>
+      <!-- Eyelids -->
+      <path d="M -32,-10 Q -18,-18 -4,-10" fill="none" stroke="#C49A6C" stroke-width="1.5"/>
+      <path d="M 4,-10 Q 18,-18 32,-10" fill="none" stroke="#C49A6C" stroke-width="1.5"/>
+    </g>
+    <!-- Flat Persian nose -->
+    <ellipse cx="0" cy="8" rx="5" ry="4" fill="#F8A0A0"/>
+    <ellipse cx="-2" cy="7" rx="2" ry="1.8" fill="#D4757A"/>
+    <ellipse cx="2" cy="7" rx="2" ry="1.8" fill="#D4757A"/>
+    <!-- Mouth -->
+    <path d="M -6,13 Q 0,19 6,13" fill="none" stroke="#C49A6C" stroke-width="1.2"/>
+    <line x1="0" y1="12" x2="0" y2="15" stroke="#C49A6C" stroke-width="1"/>
+    <!-- Whiskers -->
+    <g stroke="#C49A6C" stroke-width="0.8" opacity="0.6">
+      <line x1="-20" y1="10" x2="-65" y2="0"/>
+      <line x1="-20" y1="13" x2="-65" y2="13"/>
+      <line x1="-20" y1="16" x2="-60" y2="25"/>
+      <line x1="20" y1="10" x2="65" y2="0"/>
+      <line x1="20" y1="13" x2="65" y2="13"/>
+      <line x1="20" y1="16" x2="60" y2="25"/>
+    </g>
+    <!-- Whisker dots -->
+    <g fill="#C49A6C" opacity="0.4">
+      <circle cx="-16" cy="12" r="1"/>
+      <circle cx="-18" cy="14" r="1"/>
+      <circle cx="-15" cy="16" r="1"/>
+      <circle cx="16" cy="12" r="1"/>
+      <circle cx="18" cy="14" r="1"/>
+      <circle cx="15" cy="16" r="1"/>
+    </g>
+    <!-- Fur texture lines on cheeks -->
+    <g stroke="#C49A6C" stroke-width="0.5" opacity="0.3">
+      <path d="M -40,5 Q -35,8 -30,5"/>
+      <path d="M -42,12 Q -37,15 -32,12"/>
+      <path d="M 40,5 Q 35,8 30,5"/>
+      <path d="M 42,12 Q 37,15 32,12"/>
+    </g>
+    <!-- Forehead fur pattern -->
+    <path d="M -8,-25 Q 0,-30 8,-25" fill="none" stroke="#C49A6C" stroke-width="0.8" opacity="0.3"/>
+    <path d="M -5,-30 Q 0,-34 5,-30" fill="none" stroke="#C49A6C" stroke-width="0.6" opacity="0.2"/>
+  </g>
+  <!-- Subtle Purina branding -->
+  <text x="150" y="285" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#E91C24" opacity="0.5" font-weight="700">PURINA ONE</text>
+</svg>

@@ -42,19 +42,26 @@ export default function ShareCard({
         /* user cancelled */
       }
     } else {
-      // Fallback: copy link
+      // Fallback: copy text to clipboard
+      const shareText = `${sc.shareText
+        .replace("{name}", name)
+        .replace("{score}", String(matchScore))
+        .replace("{product}", productName)} ${window.location.origin}`;
       try {
-        await navigator.clipboard.writeText(
-          `${sc.shareText
-            .replace("{name}", name)
-            .replace("{score}", String(matchScore))
-            .replace("{product}", productName)} ${window.location.origin}`
-        );
-        setShared(true);
-        setTimeout(() => setShared(false), 2000);
+        await navigator.clipboard.writeText(shareText);
       } catch {
-        /* clipboard failed */
+        // Final fallback: use textarea trick for older browsers
+        const ta = document.createElement("textarea");
+        ta.value = shareText;
+        ta.style.position = "fixed";
+        ta.style.opacity = "0";
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        document.body.removeChild(ta);
       }
+      setShared(true);
+      setTimeout(() => setShared(false), 2500);
     }
   };
 
@@ -73,7 +80,7 @@ export default function ShareCard({
         {/* Top brand strip */}
         <div className="bg-purina-red px-5 py-2.5 flex items-center justify-between">
           <span className="text-white font-black text-xs tracking-wider">
-            PURINA ONE &#x2022; MINI ADVISOR
+            PURINA ONE &#x2022; ADVISOR
           </span>
           <span className="text-white/80 text-[10px]">purina.it</span>
         </div>
@@ -175,12 +182,12 @@ export default function ShareCard({
         >
           {shared ? (
             <>
-              <span className="text-green-400">&#x2713;</span>
-              <span className="text-green-400">{sc.shared}</span>
+              <span className="text-green-400 text-lg">&#x2713;</span>
+              <span className="text-green-400 font-bold">{sc.shared}</span>
             </>
           ) : (
             <>
-              <span>&#x1F4F1;</span>
+              <span className="text-lg">&#x1F517;</span>
               <span>{sc.button}</span>
             </>
           )}

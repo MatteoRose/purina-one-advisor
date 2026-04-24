@@ -1,0 +1,120 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="300" height="300">
+  <defs>
+    <radialGradient id="bg_hero_dog" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#E3F2FD;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#BBDEFB;stop-opacity:1" />
+    </radialGradient>
+    <radialGradient id="poodle_fur" cx="50%" cy="40%" r="50%">
+      <stop offset="0%" style="stop-color:#FAFAFA;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#E0E0E0;stop-opacity:1" />
+    </radialGradient>
+    <radialGradient id="poodle_fur_warm" cx="50%" cy="40%" r="50%">
+      <stop offset="0%" style="stop-color:#FFF8E1;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#F5E6D3;stop-opacity:1" />
+    </radialGradient>
+    <filter id="soft_shadow_dog">
+      <feDropShadow dx="0" dy="3" stdDeviation="5" flood-opacity="0.15"/>
+    </filter>
+  </defs>
+  <!-- Background circle -->
+  <circle cx="150" cy="150" r="145" fill="url(#bg_hero_dog)"/>
+  <circle cx="150" cy="150" r="140" fill="none" stroke="#E91C24" stroke-width="3" opacity="0.3"/>
+  <!-- Poodle puppy face -->
+  <g transform="translate(150,150)" filter="url(#soft_shadow_dog)">
+    <!-- Fluffy poodle fur - lots of curly circles -->
+    <!-- Top poof -->
+    <circle cx="-25" cy="-65" r="18" fill="url(#poodle_fur_warm)"/>
+    <circle cx="0" cy="-70" r="20" fill="url(#poodle_fur_warm)"/>
+    <circle cx="25" cy="-65" r="18" fill="url(#poodle_fur_warm)"/>
+    <circle cx="-15" cy="-75" r="14" fill="#FFF8E1"/>
+    <circle cx="15" cy="-75" r="14" fill="#FFF8E1"/>
+    <circle cx="0" cy="-80" r="12" fill="#FFF8E1"/>
+    <circle cx="-35" cy="-55" r="15" fill="url(#poodle_fur_warm)"/>
+    <circle cx="35" cy="-55" r="15" fill="url(#poodle_fur_warm)"/>
+    <!-- Side fluff -->
+    <circle cx="-55" cy="-20" r="18" fill="url(#poodle_fur_warm)"/>
+    <circle cx="-58" cy="0" r="16" fill="url(#poodle_fur_warm)"/>
+    <circle cx="-55" cy="20" r="15" fill="url(#poodle_fur_warm)"/>
+    <circle cx="55" cy="-20" r="18" fill="url(#poodle_fur_warm)"/>
+    <circle cx="58" cy="0" r="16" fill="url(#poodle_fur_warm)"/>
+    <circle cx="55" cy="20" r="15" fill="url(#poodle_fur_warm)"/>
+    <!-- Bottom fluff -->
+    <circle cx="-30" cy="40" r="16" fill="url(#poodle_fur_warm)"/>
+    <circle cx="0" cy="45" r="18" fill="url(#poodle_fur_warm)"/>
+    <circle cx="30" cy="40" r="16" fill="url(#poodle_fur_warm)"/>
+    <circle cx="-45" cy="30" r="14" fill="url(#poodle_fur_warm)"/>
+    <circle cx="45" cy="30" r="14" fill="url(#poodle_fur_warm)"/>
+    <!-- Main face shape -->
+    <ellipse cx="0" cy="-5" rx="48" ry="50" fill="url(#poodle_fur_warm)"/>
+    <!-- Muzzle area - lighter -->
+    <ellipse cx="0" cy="15" rx="28" ry="22" fill="#FFF8E1"/>
+    <!-- Floppy ears -->
+    <g>
+      <!-- Left ear -->
+      <ellipse cx="-48" cy="-10" rx="20" ry="40" fill="url(#poodle_fur_warm)" transform="rotate(15, -48, -10)"/>
+      <!-- Ear fluff -->
+      <circle cx="-55" cy="-25" r="10" fill="#F5E6D3"/>
+      <circle cx="-58" cy="-10" r="9" fill="#F5E6D3"/>
+      <circle cx="-55" cy="5" r="8" fill="#F5E6D3"/>
+      <circle cx="-52" cy="20" r="9" fill="#F5E6D3"/>
+      <!-- Right ear -->
+      <ellipse cx="48" cy="-10" rx="20" ry="40" fill="url(#poodle_fur_warm)" transform="rotate(-15, 48, -10)"/>
+      <!-- Ear fluff -->
+      <circle cx="55" cy="-25" r="10" fill="#F5E6D3"/>
+      <circle cx="58" cy="-10" r="9" fill="#F5E6D3"/>
+      <circle cx="55" cy="5" r="8" fill="#F5E6D3"/>
+      <circle cx="52" cy="20" r="9" fill="#F5E6D3"/>
+    </g>
+    <!-- Eyes -->
+    <g>
+      <!-- Eye whites -->
+      <ellipse cx="-16" cy="-15" rx="12" ry="13" fill="#fff"/>
+      <ellipse cx="16" cy="-15" rx="12" ry="13" fill="#fff"/>
+      <!-- Irises - warm brown -->
+      <ellipse cx="-16" cy="-14" rx="9" ry="10" fill="#5D4037"/>
+      <ellipse cx="16" cy="-14" rx="9" ry="10" fill="#5D4037"/>
+      <!-- Inner iris -->
+      <ellipse cx="-16" cy="-14" rx="6" ry="7" fill="#795548"/>
+      <ellipse cx="16" cy="-14" rx="6" ry="7" fill="#795548"/>
+      <!-- Pupils -->
+      <circle cx="-16" cy="-14" r="5" fill="#1a1a1a"/>
+      <circle cx="16" cy="-14" r="5" fill="#1a1a1a"/>
+      <!-- Eye highlights - big, puppy-like -->
+      <circle cx="-13" cy="-19" r="4" fill="#fff" opacity="0.9"/>
+      <circle cx="19" cy="-19" r="4" fill="#fff" opacity="0.9"/>
+      <circle cx="-18" cy="-10" r="2" fill="#fff" opacity="0.4"/>
+      <circle cx="14" cy="-10" r="2" fill="#fff" opacity="0.4"/>
+      <!-- Eyebrows -->
+      <path d="M -28,-22 Q -16,-30 -4,-22" fill="none" stroke="#C49A6C" stroke-width="1.5" opacity="0.4"/>
+      <path d="M 4,-22 Q 16,-30 28,-22" fill="none" stroke="#C49A6C" stroke-width="1.5" opacity="0.4"/>
+    </g>
+    <!-- Nose -->
+    <ellipse cx="0" cy="5" rx="10" ry="8" fill="#2D2D2D"/>
+    <ellipse cx="0" cy="4" rx="9" ry="6.5" fill="#3D3D3D"/>
+    <!-- Nose highlight -->
+    <ellipse cx="-2" cy="2" rx="3" ry="2" fill="#555" opacity="0.5"/>
+    <!-- Nostrils -->
+    <ellipse cx="-3.5" cy="6" rx="2.5" ry="2" fill="#1a1a1a"/>
+    <ellipse cx="3.5" cy="6" rx="2.5" ry="2" fill="#1a1a1a"/>
+    <!-- Mouth - happy smile -->
+    <path d="M -12,15 Q 0,28 12,15" fill="none" stroke="#8D6E63" stroke-width="1.8"/>
+    <line x1="0" y1="10" x2="0" y2="16" stroke="#8D6E63" stroke-width="1.2"/>
+    <!-- Tongue peeking out -->
+    <ellipse cx="0" cy="22" rx="6" ry="8" fill="#FF8A80" opacity="0.7"/>
+    <ellipse cx="0" cy="21" rx="5" ry="6" fill="#FF6B6B" opacity="0.5"/>
+    <!-- Cheek blush -->
+    <circle cx="-28" cy="5" r="8" fill="#FFCDD2" opacity="0.3"/>
+    <circle cx="28" cy="5" r="8" fill="#FFCDD2" opacity="0.3"/>
+    <!-- Forehead curl detail -->
+    <g stroke="#D4A574" stroke-width="0.8" fill="none" opacity="0.3">
+      <path d="M -8,-45 Q -5,-50 -2,-45 Q 1,-40 4,-45"/>
+      <path d="M -15,-40 Q -12,-45 -9,-40"/>
+      <path d="M 9,-40 Q 12,-45 15,-40"/>
+      <!-- Cheek curls -->
+      <path d="M -35,-5 Q -38,-10 -35,-15"/>
+      <path d="M 35,-5 Q 38,-10 35,-15"/>
+    </g>
+  </g>
+  <!-- Subtle Purina branding -->
+  <text x="150" y="285" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#E91C24" opacity="0.5" font-weight="700">PURINA ONE</text>
+</svg>

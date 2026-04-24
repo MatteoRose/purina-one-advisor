@@ -1,10 +1,11 @@
 import { create } from 'zustand';
-import { DogProfile, CartItem, HealthConcern, Lifestage, Activity } from '@/types';
+import { DogProfile, CartItem, HealthConcern, Lifestage, Activity, PetType } from '@/types';
 
 interface AdvisorState {
   // Profile
   profile: DogProfile;
   currentStep: number;
+  setPetType: (pt: PetType) => void;
   setName: (name: string) => void;
   setLifestage: (ls: Lifestage) => void;
   setActivity: (act: Activity) => void;
@@ -36,6 +37,7 @@ interface AdvisorState {
 }
 
 const initialProfile: DogProfile = {
+  petType: 'dog',
   name: '',
   lifestage: null,
   activity: null,
@@ -47,6 +49,7 @@ export const useAdvisorStore = create<AdvisorState>((set, get) => ({
   profile: { ...initialProfile },
   currentStep: 0,
 
+  setPetType: (petType) => set((s) => ({ profile: { ...s.profile, petType } })),
   setName: (name) => set((s) => ({ profile: { ...s.profile, name } })),
   setLifestage: (lifestage) => set((s) => ({ profile: { ...s.profile, lifestage } })),
   setActivity: (activity) => set((s) => ({ profile: { ...s.profile, activity } })),

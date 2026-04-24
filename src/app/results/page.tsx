@@ -191,15 +191,15 @@ export default function ResultsPage() {
           }}
         />
 
-        {/* 3 Week Challenge */}
-        <WeekChallenge product={primary.product} matchScore={primary.matchScore} />
-
         {/* Shareable Results Card */}
         <ShareCard
           profile={profile}
           product={primary.product}
           matchScore={primary.matchScore}
         />
+
+        {/* 3 Week Challenge — at the very end as the "comeback hook" */}
+        <WeekChallenge product={primary.product} matchScore={primary.matchScore} />
 
         {/* Footer Navigation */}
         <div className="flex flex-col-reverse sm:flex-row justify-between items-center gap-4 mt-14 pt-6 border-t border-border-dark">

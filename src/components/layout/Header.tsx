@@ -45,7 +45,7 @@ export default function Header() {
           </span>
           <div className="w-px h-6 bg-border-dark mx-3 sm:mx-4 hidden sm:block" />
           <span className="text-text-muted text-sm font-bold tracking-widest hidden sm:block">
-            MINI ADVISOR
+            ADVISOR
           </span>
         </div>
 
