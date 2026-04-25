@@ -7,6 +7,8 @@ interface InteractiveCardProps {
   subtitle: string;
   selected: boolean;
   onClick: () => void;
+  /** "contain" (default) = product cutouts; "cover-circle" = portrait photo in circle */
+  imageFit?: "contain" | "cover-circle";
 }
 
 export default function InteractiveCard({
@@ -15,7 +17,9 @@ export default function InteractiveCard({
   subtitle,
   selected,
   onClick,
+  imageFit = "contain",
 }: InteractiveCardProps) {
+  const isPortrait = imageFit === "cover-circle";
   return (
     <div
       onClick={onClick}
@@ -45,13 +49,23 @@ export default function InteractiveCard({
       <div className={`flex justify-center p-4 sm:p-6 transition-colors duration-200 ${
         selected ? "bg-hover-red-bg/30" : "group-hover:bg-bg-card-hover/30"
       }`}>
-        <div className="w-[80px] h-[80px] sm:w-[130px] sm:h-[130px] rounded-xl flex items-center justify-center">
+        <div
+          className={`w-[80px] h-[80px] sm:w-[130px] sm:h-[130px] flex items-center justify-center overflow-hidden ${
+            isPortrait
+              ? "rounded-full ring-2 ring-border-dark/60 shadow-lg bg-bg-card-hover/40"
+              : "rounded-xl"
+          }`}
+        >
           <Image
             src={imageSrc}
             alt={title}
-            width={120}
-            height={120}
-            className="object-contain drop-shadow-md"
+            width={isPortrait ? 260 : 120}
+            height={isPortrait ? 260 : 120}
+            className={
+              isPortrait
+                ? "w-full h-full object-cover"
+                : "object-contain drop-shadow-md"
+            }
           />
         </div>
       </div>

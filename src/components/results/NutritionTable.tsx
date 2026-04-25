@@ -45,12 +45,12 @@ export default function NutritionTable({ profile, dosage }: NutritionTableProps)
 
       <div className="flex px-5 py-3 border-b border-border-dark bg-purina-red/5">
         <span className="text-text-muted text-sm w-48 flex-shrink-0 font-medium">{t.results.dosageDry}</span>
-        <span className="text-purina-red font-black text-lg">{dosage.dry}</span>
+        <span className="text-purina-red font-black text-lg tabular-nums ml-auto">{dosage.dry}</span>
       </div>
 
       <div className="flex px-5 py-3 bg-purina-red/5">
         <span className="text-text-muted text-sm w-48 flex-shrink-0 font-medium">{t.results.dosageWet}</span>
-        <span className="text-purina-red font-black text-lg">{dosage.wet}</span>
+        <span className="text-purina-red font-black text-lg tabular-nums ml-auto">{dosage.wet}</span>
       </div>
     </div>
   );

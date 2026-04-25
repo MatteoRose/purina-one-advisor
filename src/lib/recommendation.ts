@@ -75,6 +75,10 @@ const REASON_TEMPLATES: Record<string, { en: string; it: string }> = {
     en: 'Complete everyday nutrition',
     it: 'Nutrizione completa quotidiana',
   },
+  cat_sterilized_match: {
+    en: 'Tailored for sterilized cats',
+    it: 'Su misura per gatti sterilizzati',
+  },
 };
 
 /** Match explanation labels (concise) */
@@ -184,6 +188,20 @@ function scoreProduct(product: Product, profile: DogProfile): ScoredProduct {
       labelIt: EXPLANATION_LABELS.health.it,
       matched: healthMatched,
     });
+  }
+
+  // --- Sterilization boost (cats only) ---
+  // When the user flags the cat as sterilized, push Sterilcat hard to the top
+  // and add a reason to explain the match. No-op for dogs — Purina ONE has no
+  // sterilized <10kg dog line, so the flag should never be set anyway.
+  if (isCat && profile.sterilized && product.id === 'cat_sterilcat_turkey') {
+    score += 25;
+    maxScore += 25;
+    const tmpl = REASON_TEMPLATES.cat_sterilized_match;
+    if (tmpl) {
+      reasons.push(tmpl.en);
+      reasonsIt.push(tmpl.it);
+    }
   }
 
   return { product, score, maxScore, reasons, reasonsIt, explanations };

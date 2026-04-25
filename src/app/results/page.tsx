@@ -19,6 +19,7 @@ export default function ResultsPage() {
   const { t, locale, interpolate } = useTranslation();
   const profile = useAdvisorStore((s) => s.profile);
   const addToCart = useAdvisorStore((s) => s.addToCart);
+  const addBundleToCart = useAdvisorStore((s) => s.addBundleToCart);
   const reset = useAdvisorStore((s) => s.reset);
 
   useEffect(() => {
@@ -185,9 +186,12 @@ export default function ResultsPage() {
           dosage={primary.dosage}
           crossSell={result.crossSell}
           onAddAllToCart={() => {
-            addToCart(primary.product.id);
-            if (primary.wet) addToCart(primary.wet.id);
-            result.crossSell.forEach((p) => addToCart(p.id));
+            const bundle = [
+              primary.product.id,
+              ...(primary.wet ? [primary.wet.id] : []),
+              ...result.crossSell.map((p) => p.id),
+            ];
+            addBundleToCart(bundle);
           }}
         />
 

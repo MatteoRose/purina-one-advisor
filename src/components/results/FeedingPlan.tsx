@@ -68,22 +68,24 @@ export default function FeedingPlan({
           <div className="w-10 h-10 rounded-full bg-amber-500/15 flex items-center justify-center flex-shrink-0 mt-0.5">
             <span className="text-lg">&#x2600;&#xFE0F;</span>
           </div>
-          <div className="flex-1">
+          <div className="flex-1 min-w-0">
             <p className="font-bold text-text-title text-sm">{fp.morning}</p>
-            <div className="flex items-center gap-2 mt-1">
-              <Image
-                src={dryProduct.img}
-                alt={getName(dryProduct)}
-                width={32}
-                height={32}
-                className="rounded object-contain"
-              />
-              <p className="text-text-body text-xs leading-relaxed">
-                {getName(dryProduct)}{" "}
-                <span className="text-purina-red font-bold">
-                  — {dryHalf}g
-                </span>
-              </p>
+            <div className="flex items-center justify-between gap-3 mt-1">
+              <div className="flex items-center gap-2 min-w-0">
+                <Image
+                  src={dryProduct.img}
+                  alt={getName(dryProduct)}
+                  width={32}
+                  height={32}
+                  className="rounded object-contain flex-shrink-0"
+                />
+                <p className="text-text-body text-xs leading-relaxed truncate">
+                  {getName(dryProduct)}
+                </p>
+              </div>
+              <span className="text-purina-red font-black text-base sm:text-lg tabular-nums flex-shrink-0">
+                {dryHalf}g
+              </span>
             </div>
           </div>
         </div>
@@ -96,35 +98,42 @@ export default function FeedingPlan({
           <div className="w-10 h-10 rounded-full bg-indigo-500/15 flex items-center justify-center flex-shrink-0 mt-0.5">
             <span className="text-lg">&#x1F319;</span>
           </div>
-          <div className="flex-1">
+          <div className="flex-1 min-w-0">
             <p className="font-bold text-text-title text-sm">{fp.evening}</p>
-            <div className="flex items-center gap-2 mt-1">
-              <Image
-                src={dryProduct.img}
-                alt={getName(dryProduct)}
-                width={32}
-                height={32}
-                className="rounded object-contain"
-              />
-              <p className="text-text-body text-xs leading-relaxed">
-                {getName(dryProduct)}{" "}
-                <span className="text-purina-red font-bold">
-                  — {dryHalf}g
-                </span>
-              </p>
-            </div>
-            {wetProduct && (
-              <div className="flex items-center gap-2 mt-2">
+            <div className="flex items-center justify-between gap-3 mt-1">
+              <div className="flex items-center gap-2 min-w-0">
                 <Image
-                  src={wetProduct.img}
-                  alt={getName(wetProduct)}
+                  src={dryProduct.img}
+                  alt={getName(dryProduct)}
                   width={32}
                   height={32}
-                  className="rounded object-contain"
+                  className="rounded object-contain flex-shrink-0"
                 />
-                <p className="text-text-body text-xs leading-relaxed">
-                  {fp.wetSchedule.replace("{product}", getName(wetProduct))}
+                <p className="text-text-body text-xs leading-relaxed truncate">
+                  {getName(dryProduct)}
                 </p>
+              </div>
+              <span className="text-purina-red font-black text-base sm:text-lg tabular-nums flex-shrink-0">
+                {dryHalf}g
+              </span>
+            </div>
+            {wetProduct && (
+              <div className="flex items-center justify-between gap-3 mt-2">
+                <div className="flex items-center gap-2 min-w-0">
+                  <Image
+                    src={wetProduct.img}
+                    alt={getName(wetProduct)}
+                    width={32}
+                    height={32}
+                    className="rounded object-contain flex-shrink-0"
+                  />
+                  <p className="text-text-body text-xs leading-relaxed truncate">
+                    {fp.wetSchedule.replace("{product}", getName(wetProduct))}
+                  </p>
+                </div>
+                <span className="text-purina-red font-black text-base sm:text-lg tabular-nums flex-shrink-0">
+                  {dosage.wet}
+                </span>
               </div>
             )}
           </div>

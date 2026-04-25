@@ -30,6 +30,8 @@ export interface DogProfile {
   activity: Activity | null;
   health: HealthConcern[];
   weight: number;
+  /** Cat-only. Ignored for dogs (Purina ONE Mini has no sterilized line <10kg). */
+  sterilized?: boolean;
 }
 
 export interface CartItem {
