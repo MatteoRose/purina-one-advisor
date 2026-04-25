@@ -213,13 +213,13 @@ export default function HeroSection() {
               whileTap={{ scale: 0.97 }}
             >
               <div className="bg-bg-card p-3 sm:p-4">
-                <div className="w-full aspect-square rounded-xl bg-bg-card-hover/60 flex items-center justify-center overflow-hidden mb-3">
+                <div className="w-full aspect-square rounded-xl bg-bg-card-hover/60 overflow-hidden mb-3 relative">
                   <Image
-                    src="/images/hero_dog.svg"
+                    src="/images/hero_dog.jpg"
                     alt="Dog"
-                    width={140}
-                    height={140}
-                    className="object-contain drop-shadow-md group-hover:scale-110 transition-transform duration-300"
+                    fill
+                    sizes="(max-width: 640px) 45vw, 200px"
+                    className="object-cover group-hover:scale-105 transition-transform duration-300"
                   />
                 </div>
                 <p className={`font-black text-lg sm:text-xl transition-colors duration-200 ${
@@ -256,13 +256,13 @@ export default function HeroSection() {
               whileTap={{ scale: 0.97 }}
             >
               <div className="bg-bg-card p-3 sm:p-4">
-                <div className="w-full aspect-square rounded-xl bg-bg-card-hover/60 flex items-center justify-center overflow-hidden mb-3">
+                <div className="w-full aspect-square rounded-xl bg-bg-card-hover/60 overflow-hidden mb-3 relative">
                   <Image
-                    src="/images/hero_cat.svg"
+                    src="/images/hero_cat.jpg"
                     alt="Cat"
-                    width={140}
-                    height={140}
-                    className="object-contain drop-shadow-md group-hover:scale-110 transition-transform duration-300"
+                    fill
+                    sizes="(max-width: 640px) 45vw, 200px"
+                    className="object-cover group-hover:scale-105 transition-transform duration-300"
                   />
                 </div>
                 <p className={`font-black text-lg sm:text-xl transition-colors duration-200 ${
