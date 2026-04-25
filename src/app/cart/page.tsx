@@ -11,11 +11,24 @@ export default function CartPage() {
   const { t } = useTranslation();
   const router = useRouter();
   const cart = useAdvisorStore((s) => s.cart);
+  const discountUnlocked = useAdvisorStore((s) => s.discountUnlocked);
+  const primaryProductId = useAdvisorStore((s) => s.primaryProductId);
 
-  const total = cart.reduce(
-    (sum, item) => sum + (PRODUCTS_MAP[item.productId]?.price || 0) * item.quantity,
-    0
-  );
+  const total = cart.reduce((sum, item) => {
+    const base = PRODUCTS_MAP[item.productId]?.price ?? 0;
+    const isDiscounted = discountUnlocked && item.productId === primaryProductId;
+    const unit = isDiscounted ? base * 0.8 : base;
+    return sum + unit * item.quantity;
+  }, 0);
+
+  // Compute "you saved" total for the discount line — shown only when applicable.
+  const savings = (() => {
+    if (!discountUnlocked || !primaryProductId) return 0;
+    const item = cart.find((i) => i.productId === primaryProductId);
+    if (!item) return 0;
+    const base = PRODUCTS_MAP[primaryProductId]?.price ?? 0;
+    return base * 0.2 * item.quantity;
+  })();
 
   return (
     <div className="relative min-h-screen">
@@ -80,11 +93,23 @@ export default function CartPage() {
               </div>
 
               {/* Total row */}
-              <div className="px-5 py-5 flex justify-end items-center gap-6 border-t border-purina-red/30 bg-hover-red-bg/20">
-                <span className="text-lg font-bold text-text-title">{t.cart.total}</span>
-                <span className="text-2xl font-black text-purina-red">
-                  &euro; {total.toFixed(2)}
-                </span>
+              <div className="px-5 py-5 border-t border-purina-red/30 bg-hover-red-bg/20">
+                {savings > 0 && (
+                  <div className="flex justify-end items-center gap-6 mb-2">
+                    <span className="text-sm font-medium text-green-400">
+                      &#x2713; Discount applied (&minus;20%)
+                    </span>
+                    <span className="text-base font-bold text-green-400 tabular-nums">
+                      &minus; &euro; {savings.toFixed(2)}
+                    </span>
+                  </div>
+                )}
+                <div className="flex justify-end items-center gap-6">
+                  <span className="text-lg font-bold text-text-title">{t.cart.total}</span>
+                  <span className="text-2xl font-black text-purina-red tabular-nums">
+                    &euro; {total.toFixed(2)}
+                  </span>
+                </div>
               </div>
             </div>
           </motion.div>

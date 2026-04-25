@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "@/i18n/config";
+import { useAdvisorStore } from "@/stores/useAdvisorStore";
 import { ScoredRecommendation } from "@/types";
 import MatchScoreBadge from "./MatchScoreBadge";
 
@@ -15,7 +15,9 @@ interface RecommendationCardProps {
 
 export default function RecommendationCard({ rec, rank, onAddToCart }: RecommendationCardProps) {
   const { t, locale } = useTranslation();
-  const [discountUnlocked, setDiscountUnlocked] = useState(false);
+  const discountUnlocked = useAdvisorStore((s) => s.discountUnlocked);
+  const primaryProductId = useAdvisorStore((s) => s.primaryProductId);
+  const unlockDiscount = useAdvisorStore((s) => s.unlockDiscount);
 
   const name = locale === "it" ? rec.product.name : rec.product.nameEn;
   const desc = locale === "it" ? rec.product.desc : rec.product.descEn;
@@ -25,8 +27,13 @@ export default function RecommendationCard({ rec, rank, onAddToCart }: Recommend
   const originalPrice = rec.product.price;
   const discountedPrice = (originalPrice * 0.8).toFixed(2);
 
+  // Discount applies only to the first (rank 0) card — defensive double check:
+  // we require BOTH isPrimary AND that the unlocked productId matches this card.
+  const showDiscount =
+    isPrimary && discountUnlocked && primaryProductId === rec.product.id;
+
   const handleUnlockDiscount = () => {
-    setDiscountUnlocked(true);
+    unlockDiscount(rec.product.id);
   };
 
   return (
@@ -82,7 +89,7 @@ export default function RecommendationCard({ rec, rank, onAddToCart }: Recommend
             {/* Price section */}
             <div className="mt-1">
               <AnimatePresence mode="wait">
-                {discountUnlocked ? (
+                {showDiscount ? (
                   <motion.div
                     key="discounted"
                     initial={{ opacity: 0, scale: 0.8 }}
@@ -176,8 +183,8 @@ export default function RecommendationCard({ rec, rank, onAddToCart }: Recommend
               </div>
             )}
 
-            {/* Unlock Discount Button */}
-            {!discountUnlocked && (
+            {/* Unlock Discount Button — primary only, hidden once unlocked */}
+            {isPrimary && !showDiscount && !discountUnlocked && (
               <motion.button
                 onClick={handleUnlockDiscount}
                 className={`mt-4 w-full relative overflow-hidden rounded-xl font-bold transition-all duration-200 active:scale-[0.97] ${
@@ -204,7 +211,7 @@ export default function RecommendationCard({ rec, rank, onAddToCart }: Recommend
             {/* Add to Cart */}
             <button
               onClick={onAddToCart}
-              className={`${discountUnlocked ? "mt-3" : "mt-2"} bg-purina-red text-white font-bold rounded-full hover:bg-purina-red-hover transition-all duration-200 hover:shadow-lg hover:shadow-purina-red/20 active:scale-[0.97] ${
+              className={`${showDiscount ? "mt-3" : isPrimary ? "mt-2" : "mt-4"} bg-purina-red text-white font-bold rounded-full hover:bg-purina-red-hover transition-all duration-200 hover:shadow-lg hover:shadow-purina-red/20 active:scale-[0.97] ${
                 isPrimary ? "py-3 px-8 text-sm" : "py-2 px-5 text-xs"
               }`}
             >

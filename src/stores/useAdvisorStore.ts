@@ -11,6 +11,7 @@ interface AdvisorState {
   setActivity: (act: Activity) => void;
   toggleHealth: (h: HealthConcern) => void;
   setWeight: (w: number) => void;
+  setSterilized: (v: boolean) => void;
   nextStep: () => void;
   prevStep: () => void;
   goToStep: (step: number) => void;
@@ -18,11 +19,18 @@ interface AdvisorState {
   // Cart
   cart: CartItem[];
   addToCart: (productId: string) => void;
+  addBundleToCart: (productIds: string[]) => void;
   removeFromCart: (productId: string) => void;
   updateQuantity: (productId: string, delta: number) => void;
   clearCart: () => void;
   lastAdded: string | null;
   lastAddedAt: number;
+  lastAddedBatch: string[];
+
+  // Discount — global, applies ONLY to the first recommended product
+  discountUnlocked: boolean;
+  primaryProductId: string | null;
+  unlockDiscount: (productId: string) => void;
 
   // Language
   locale: 'en' | 'it';
@@ -66,6 +74,7 @@ export const useAdvisorStore = create<AdvisorState>((set, get) => ({
     };
   }),
   setWeight: (weight) => set((s) => ({ profile: { ...s.profile, weight } })),
+  setSterilized: (sterilized) => set((s) => ({ profile: { ...s.profile, sterilized } })),
   nextStep: () => set((s) => ({ currentStep: Math.min(s.currentStep + 1, 4) })),
   prevStep: () => set((s) => ({ currentStep: Math.max(s.currentStep - 1, 0) })),
   goToStep: (step) => set({ currentStep: step }),
@@ -74,12 +83,29 @@ export const useAdvisorStore = create<AdvisorState>((set, get) => ({
   cart: [],
   lastAdded: null,
   lastAddedAt: 0,
+  lastAddedBatch: [],
   addToCart: (productId) => set((s) => {
     const existing = s.cart.find(item => item.productId === productId);
     const newCart = existing
       ? s.cart.map(item => item.productId === productId ? { ...item, quantity: item.quantity + 1 } : item)
       : [...s.cart, { productId, quantity: 1 }];
-    return { cart: newCart, lastAdded: productId, lastAddedAt: Date.now() };
+    return { cart: newCart, lastAdded: productId, lastAddedAt: Date.now(), lastAddedBatch: [productId] };
+  }),
+  addBundleToCart: (productIds) => set((s) => {
+    const unique = Array.from(new Set(productIds));
+    let newCart = [...s.cart];
+    for (const pid of unique) {
+      const existing = newCart.find(item => item.productId === pid);
+      newCart = existing
+        ? newCart.map(item => item.productId === pid ? { ...item, quantity: item.quantity + 1 } : item)
+        : [...newCart, { productId: pid, quantity: 1 }];
+    }
+    return {
+      cart: newCart,
+      lastAdded: unique[unique.length - 1] ?? null,
+      lastAddedAt: Date.now(),
+      lastAddedBatch: unique,
+    };
   }),
   removeFromCart: (productId) => set((s) => ({
     cart: s.cart.filter(item => item.productId !== productId),
@@ -91,6 +117,11 @@ export const useAdvisorStore = create<AdvisorState>((set, get) => ({
     return { cart: newCart };
   }),
   clearCart: () => set({ cart: [] }),
+
+  // Discount
+  discountUnlocked: false,
+  primaryProductId: null,
+  unlockDiscount: (productId) => set({ discountUnlocked: true, primaryProductId: productId }),
 
   // Language
   locale: 'en',
@@ -113,5 +144,8 @@ export const useAdvisorStore = create<AdvisorState>((set, get) => ({
     cart: [],
     lastAdded: null,
     lastAddedAt: 0,
+    lastAddedBatch: [],
+    discountUnlocked: false,
+    primaryProductId: null,
   }),
 }));

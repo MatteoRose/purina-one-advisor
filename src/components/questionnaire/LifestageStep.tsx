@@ -11,9 +11,9 @@ const dogLifestages: { value: Lifestage; image: string }[] = [
 ];
 
 const catLifestages: { value: Lifestage; image: string }[] = [
-  { value: "Junior", image: "/images/cat_secco_junior.jpg" },
-  { value: "Adult", image: "/images/cat_secco_adult.jpg" },
-  { value: "Senior", image: "/images/cat_secco_senior.jpg" },
+  { value: "Junior", image: "/images/cat_lifestage_kitten.jpg" },
+  { value: "Adult", image: "/images/cat_lifestage_adult.jpg" },
+  { value: "Senior", image: "/images/cat_lifestage_senior.jpg" },
 ];
 
 export default function LifestageStep() {
@@ -54,6 +54,7 @@ export default function LifestageStep() {
             subtitle={lifestageLabels[value].sub}
             selected={profile.lifestage === value}
             onClick={() => setLifestage(value)}
+            imageFit={isCat ? "cover-circle" : "contain"}
           />
         ))}
       </div>
