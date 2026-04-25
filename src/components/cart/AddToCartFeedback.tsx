@@ -12,6 +12,8 @@ export default function AddToCartFeedback() {
   const lastAddedAt = useAdvisorStore((s) => s.lastAddedAt);
   const lastAdded = useAdvisorStore((s) => s.lastAdded);
   const lastAddedBatch = useAdvisorStore((s) => s.lastAddedBatch);
+  const discountUnlocked = useAdvisorStore((s) => s.discountUnlocked);
+  const primaryProductId = useAdvisorStore((s) => s.primaryProductId);
   const [show, setShow] = useState(false);
   const [snapshotBatch, setSnapshotBatch] = useState<string[]>([]);
   const timerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
@@ -33,7 +35,18 @@ export default function AddToCartFeedback() {
   if (!singleProduct) return null;
 
   const singleName = locale === "en" ? singleProduct.nameEn : singleProduct.name;
-  const totalPrice = products.reduce((sum, p) => sum + p.price, 0);
+
+  // Apply 20% off to the unlocked primary product whenever it appears,
+  // both in single-item toast and full-plan toast totals.
+  const priceFor = (id: string, base: number) =>
+    discountUnlocked && id === primaryProductId ? base * 0.8 : base;
+  const singleIsDiscounted =
+    discountUnlocked && singleProduct.id === primaryProductId;
+  const singleEffective = priceFor(singleProduct.id, singleProduct.price);
+  const totalPrice = products.reduce(
+    (sum, p) => sum + priceFor(p.id, p.price),
+    0
+  );
 
   return (
     <AnimatePresence>
@@ -186,10 +199,25 @@ export default function AddToCartFeedback() {
                 <p className="font-bold text-text-title text-sm truncate">
                   {singleName}
                 </p>
-                <p className="text-green-400 text-xs font-semibold">
-                  {locale === "it" ? "Aggiunto" : "Added"} &mdash; &euro;
-                  {singleProduct.price.toFixed(2)}
-                </p>
+                {singleIsDiscounted ? (
+                  <p className="text-green-400 text-xs font-semibold flex items-center gap-1.5">
+                    <span>{locale === "it" ? "Aggiunto" : "Added"} &mdash;</span>
+                    <span className="font-bold tabular-nums">
+                      &euro;{singleEffective.toFixed(2)}
+                    </span>
+                    <span className="line-through text-text-muted tabular-nums">
+                      &euro;{singleProduct.price.toFixed(2)}
+                    </span>
+                    <span className="text-[10px] font-bold bg-green-500/20 border border-green-500/30 px-1.5 py-0.5 rounded-full">
+                      &minus;20%
+                    </span>
+                  </p>
+                ) : (
+                  <p className="text-green-400 text-xs font-semibold">
+                    {locale === "it" ? "Aggiunto" : "Added"} &mdash; &euro;
+                    {singleProduct.price.toFixed(2)}
+                  </p>
+                )}
               </div>
 
               <motion.span

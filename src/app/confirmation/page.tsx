@@ -13,11 +13,26 @@ export default function ConfirmationPage() {
   const cart = useAdvisorStore((s) => s.cart);
   const reset = useAdvisorStore((s) => s.reset);
   const clearCart = useAdvisorStore((s) => s.clearCart);
+  const discountUnlocked = useAdvisorStore((s) => s.discountUnlocked);
+  const primaryProductId = useAdvisorStore((s) => s.primaryProductId);
+
+  const unitPriceFor = (productId: string) => {
+    const base = PRODUCTS_MAP[productId]?.price ?? 0;
+    return discountUnlocked && productId === primaryProductId ? base * 0.8 : base;
+  };
 
   const total = cart.reduce(
-    (sum, item) => sum + (PRODUCTS_MAP[item.productId]?.price || 0) * item.quantity,
+    (sum, item) => sum + unitPriceFor(item.productId) * item.quantity,
     0
   );
+
+  const savings = (() => {
+    if (!discountUnlocked || !primaryProductId) return 0;
+    const item = cart.find((i) => i.productId === primaryProductId);
+    if (!item) return 0;
+    const base = PRODUCTS_MAP[primaryProductId]?.price ?? 0;
+    return base * 0.2 * item.quantity;
+  })();
 
   const getProductName = (productId: string) => {
     const product = PRODUCTS_MAP[productId];
@@ -107,21 +122,40 @@ export default function ConfirmationPage() {
             </h2>
 
             {cart.map((item) => {
-              const subtotal = (PRODUCTS_MAP[item.productId]?.price || 0) * item.quantity;
+              const isDiscounted =
+                discountUnlocked && item.productId === primaryProductId;
+              const subtotal = unitPriceFor(item.productId) * item.quantity;
               return (
                 <div
                   key={item.productId}
                   className="flex justify-between py-2.5 border-b border-border-dark last:border-0"
                 >
-                  <span className="text-sm text-text-body">
+                  <span className="text-sm text-text-body flex items-center gap-1.5">
                     {getProductName(item.productId)} &times; {item.quantity}
+                    {isDiscounted && (
+                      <span className="text-[10px] font-bold text-green-400 bg-green-500/15 border border-green-500/25 px-1.5 py-0.5 rounded-full">
+                        &minus;20%
+                      </span>
+                    )}
                   </span>
-                  <span className="font-bold text-text-title tabular-nums">
+                  <span className={`font-bold tabular-nums ${isDiscounted ? 'text-green-500' : 'text-text-title'}`}>
                     &euro; {subtotal.toFixed(2)}
                   </span>
                 </div>
               );
             })}
+
+            {/* Savings line */}
+            {savings > 0 && (
+              <div className="flex justify-between pt-3 text-sm">
+                <span className="text-green-500 font-medium">
+                  &#x2713; {locale === 'it' ? 'Sconto applicato' : 'Discount applied'} (&minus;20%)
+                </span>
+                <span className="text-green-500 font-bold tabular-nums">
+                  &minus; &euro; {savings.toFixed(2)}
+                </span>
+              </div>
+            )}
 
             {/* Total */}
             <div className="flex justify-between pt-4 mt-2 border-t-2 border-purina-red">
