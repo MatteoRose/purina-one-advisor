@@ -12,7 +12,7 @@ import NutritionTable from "@/components/results/NutritionTable";
 import MiniProductCard from "@/components/results/MiniProductCard";
 import FeedingPlan from "@/components/results/FeedingPlan";
 import WeekChallenge from "@/components/results/WeekChallenge";
-import ShareCard from "@/components/results/ShareCard";
+import ShareStoryCard from "@/components/results/ShareStoryCard";
 
 export default function ResultsPage() {
   const router = useRouter();
@@ -195,10 +195,12 @@ export default function ResultsPage() {
           }}
         />
 
-        {/* Shareable Results Card */}
-        <ShareCard
+        {/* Shareable Story Card — Spotify-Wrapped style for IG/WA stories */}
+        <ShareStoryCard
           profile={profile}
           product={primary.product}
+          wetProduct={primary.wet}
+          dosage={primary.dosage}
           matchScore={primary.matchScore}
         />
 
