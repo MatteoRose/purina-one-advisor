@@ -1,12 +1,18 @@
 "use client";
 
 /**
- * ShareStoryCard — Spotify-Wrapped-style vertical 9:16 share card.
+ * ShareStoryCard — Spotify-Wrapped-style 9:16 share card.
  *
- * Renders an in-app preview that animates section-by-section on "Generate".
- * Exports a 1080×1920 PNG via html-to-image, then offers Web Share API
- * (with file attachment when supported) so users can post directly to
- * Instagram / WhatsApp Stories from their phone.
+ * One-page layout: hero (product + match score) → 3 big-number stat cards
+ * → footer. No daily plan (FeedingPlan lives separately on the results
+ * page). Stat-card colors come from a rotating palette set so two pets
+ * never share the same vibe; "Shuffle colors" cycles through PALETTES.
+ *
+ * Export: html-to-image at 3× → 1080×1920 PNG. Sharing prefers the Web
+ * Share API with file attachment (mobile native share sheet → IG/WA
+ * Stories, Save to Photos), falling back to a blob-URL download on
+ * desktop. Blob URL + DOM-attached anchor is the only reliable path on
+ * iOS Safari, where data-URL clicks silently navigate instead of saving.
  */
 
 import Image from "next/image";
@@ -16,6 +22,7 @@ import * as htmlToImage from "html-to-image";
 import { useTranslation } from "@/i18n/config";
 import type { DogProfile, Product, DosageResult } from "@/types";
 import { getStatsFor, type ScienceStat } from "@/lib/scienceStats";
+import { PALETTES, paletteIndexFor } from "@/lib/palettes";
 
 interface ShareStoryCardProps {
   profile: DogProfile;
@@ -28,8 +35,7 @@ interface ShareStoryCardProps {
 export default function ShareStoryCard({
   profile,
   product,
-  wetProduct,
-  dosage,
+  dosage: _dosage,
   matchScore,
 }: ShareStoryCardProps) {
   const { t, locale, interpolate } = useTranslation();
@@ -37,26 +43,26 @@ export default function ShareStoryCard({
 
   const cardRef = useRef<HTMLDivElement>(null);
   const [generated, setGenerated] = useState(false);
-  const [busy, setBusy] = useState<"idle" | "saving" | "sharing">("idle");
+  const [busy, setBusy] = useState(false);
   const [feedback, setFeedback] = useState<"saved" | "shared" | null>(null);
+
+  // Deterministic starting palette per pet → same name = same opening vibe.
+  // Shuffle cycles forward so users can iterate to a preferred set.
+  const [paletteIndex, setPaletteIndex] = useState(() =>
+    paletteIndexFor(profile.name || "default")
+  );
+  const palette = PALETTES[paletteIndex];
 
   const name = profile.name || (locale === "it" ? "Il tuo pet" : "Your Pet");
   const productName = locale === "it" ? product.name : product.nameEn;
 
-  // Pre-compute 3 stats for this profile + product
+  // Pre-compute 3 stats for this profile + product (priority-sorted).
   const stats = getStatsFor(profile, product, 3);
 
-  // Per-meal dry split (e.g. "68–83g" → "34–42g")
-  const dryHalf = dosage.dry
-    .replace("g", "")
-    .split("\u2013")
-    .map((v) => Math.round(parseInt(v) / 2))
-    .join("\u2013");
-
-  // ───────────────────── Export to PNG ─────────────────────
-  const exportPng = async (): Promise<{ dataUrl: string; file: File } | null> => {
+  // ───────────────────── Export ─────────────────────
+  const exportPng = async (): Promise<{ blob: Blob; file: File } | null> => {
     if (!cardRef.current) return null;
-    // Render at 3× pixel density for crisp 1080×1920 output from a 360×640 source.
+    // 3× pixelRatio renders the 360×640 source DOM at a crisp 1080×1920.
     const dataUrl = await htmlToImage.toPng(cardRef.current, {
       pixelRatio: 3,
       cacheBust: true,
@@ -66,55 +72,53 @@ export default function ShareStoryCard({
     const file = new File([blob], `${name}-purina-wrapped.png`, {
       type: "image/png",
     });
-    return { dataUrl, file };
+    return { blob, file };
   };
 
-  const handleSave = async () => {
-    setBusy("saving");
+  /**
+   * Single share/save handler.
+   * Mobile: prefers Web Share API with file → native sheet exposes
+   *         IG/WhatsApp/Save to Photos in one tap.
+   * Desktop: downloads via blob URL + DOM-attached anchor (the only
+   *          path that works reliably across Chrome/Firefox/Safari).
+   */
+  const handleShare = async () => {
+    setBusy(true);
     try {
       const out = await exportPng();
       if (!out) return;
-      const link = document.createElement("a");
-      link.href = out.dataUrl;
-      link.download = out.file.name;
-      link.click();
-      setFeedback("saved");
-      setTimeout(() => setFeedback(null), 2200);
-    } finally {
-      setBusy("idle");
-    }
-  };
 
-  const handleShareToStory = async () => {
-    setBusy("sharing");
-    try {
-      const out = await exportPng();
-      if (!out) return;
-      // Web Share API with files — works on iOS Safari & Chrome Android.
-      // Falls back to clipboard + download for desktop browsers.
       const navAny = navigator as Navigator & {
         canShare?: (data: { files: File[] }) => boolean;
       };
-      if (navAny.canShare?.({ files: [out.file] }) && navigator.share) {
-        await navigator.share({
-          files: [out.file],
-          title: interpolate(ss.storyHero, { name }),
-          text: ss.footerUrl,
-        });
-        setFeedback("shared");
+      const canNativeShare =
+        typeof navigator.share === "function" &&
+        navAny.canShare?.({ files: [out.file] });
+
+      if (canNativeShare) {
+        try {
+          await navigator.share({
+            files: [out.file],
+            title: interpolate(ss.storyHero, { name }),
+            text: ss.footerUrl,
+          });
+          setFeedback("shared");
+        } catch (err: unknown) {
+          // AbortError = user dismissed the sheet — silent.
+          const e = err as { name?: string };
+          if (e?.name !== "AbortError") {
+            // Real failure — fall back to download so the user still gets the PNG.
+            triggerBlobDownload(out.blob, out.file.name);
+            setFeedback("saved");
+          }
+        }
       } else {
-        // Desktop fallback: download + copy URL
-        const link = document.createElement("a");
-        link.href = out.dataUrl;
-        link.download = out.file.name;
-        link.click();
+        triggerBlobDownload(out.blob, out.file.name);
         setFeedback("saved");
       }
       setTimeout(() => setFeedback(null), 2200);
-    } catch {
-      // user cancelled native share — silent
     } finally {
-      setBusy("idle");
+      setBusy(false);
     }
   };
 
@@ -128,10 +132,7 @@ export default function ShareStoryCard({
         <p className="text-text-muted text-xs mt-1">{ss.teaserSub}</p>
       </div>
 
-      {/* ════════════ THE CARD ════════════
-           Rendered at 360×640 in-app for preview, exported at 1080×1920
-           (pixelRatio: 3). Aspect ratio is locked to 9:16 so it slots
-           perfectly into IG / WhatsApp story canvas. */}
+      {/* ════════════ THE CARD (360×640 source → 1080×1920 PNG) ════════════ */}
       <div className="relative mx-auto" style={{ width: 360, maxWidth: "100%" }}>
         <div
           ref={cardRef}
@@ -139,13 +140,12 @@ export default function ShareStoryCard({
           style={{
             width: 360,
             height: 640,
-            background:
-              "linear-gradient(180deg, #0a0a0a 0%, #1a0a0c 50%, #0a0a0a 100%)",
+            background: palette.bg,
           }}
         >
-          {/* ─── HERO ─── */}
+          {/* ─── HERO: product + match score (the emphasized recommendation) ─── */}
           <motion.div
-            className="relative px-5 pt-5 pb-4 bg-gradient-to-br from-purina-red via-rose-600 to-red-700"
+            className="relative px-5 pt-5 pb-5 bg-gradient-to-br from-purina-red via-rose-600 to-red-700"
             initial={{ opacity: 0, y: -20 }}
             animate={generated ? { opacity: 1, y: 0 } : { opacity: 0.85, y: 0 }}
             transition={{ duration: 0.5 }}
@@ -160,111 +160,68 @@ export default function ShareStoryCard({
                 </p>
               </div>
               <div className="bg-white/15 backdrop-blur-sm rounded-full px-2.5 py-1 border border-white/30">
-                <span className="text-white text-[10px] font-black">
-                  {interpolate(ss.matchPct, { score: String(matchScore) })}
+                <span className="text-white text-[9px] font-black tracking-wider">
+                  {ss.perfectMatch}
                 </span>
               </div>
             </div>
 
-            <h2 className="text-white font-black text-2xl mt-3 leading-tight drop-shadow-md">
+            {/* BIG pet name */}
+            <h2 className="text-white font-black text-4xl mt-2 leading-none tracking-tight drop-shadow-md">
               {interpolate(ss.storyHero, { name: name.toUpperCase() })}
             </h2>
+            <p className="text-white/85 text-[10px] mt-0.5 font-medium">
+              {ss.storyHeroSub}
+            </p>
 
-            <div className="mt-2 flex items-center gap-2">
-              <div className="w-10 h-10 bg-white/15 rounded-lg flex-shrink-0 flex items-center justify-center backdrop-blur-sm border border-white/20 overflow-hidden">
+            {/* HERO product card — bigger image, score loud */}
+            <div className="mt-3 flex items-center gap-3 bg-white/12 backdrop-blur-sm rounded-2xl p-2.5 border border-white/20">
+              <div className="w-[72px] h-[72px] bg-white/95 rounded-xl flex-shrink-0 flex items-center justify-center overflow-hidden shadow-md">
                 <Image
                   src={product.img}
                   alt={productName}
-                  width={36}
-                  height={36}
+                  width={64}
+                  height={64}
                   className="object-contain"
                   unoptimized
                 />
               </div>
-              <div className="min-w-0">
-                <p className="text-white font-bold text-[11px] truncate">
+              <div className="min-w-0 flex-1">
+                <p className="text-white font-black text-xs leading-tight">
                   {productName}
                 </p>
-                <p className="text-white/70 text-[9px]">
+                <p className="text-white/75 text-[9px] mt-1">
                   {profile.lifestage} ·{" "}
                   {interpolate(ss.weight, { kg: profile.weight.toFixed(1) })}
                 </p>
+                <div className="mt-1.5 inline-flex items-baseline gap-1">
+                  <span className="text-white font-black text-2xl leading-none tabular-nums drop-shadow-sm">
+                    {matchScore}%
+                  </span>
+                  <span className="text-white/80 text-[9px] font-bold uppercase tracking-wider">
+                    match
+                  </span>
+                </div>
               </div>
             </div>
           </motion.div>
 
-          {/* ─── 3 BIG-NUMBER STAT CARDS (Spotify-Wrapped style) ─── */}
-          <div className="px-4 py-3 space-y-2">
-            <p className="text-white/50 text-[9px] font-black tracking-[0.2em] mb-1">
+          {/* ─── 3 BIG-NUMBER STAT CARDS — palette-driven gradients ─── */}
+          <div className="px-4 pt-3 pb-4 space-y-2">
+            <p className="text-white/55 text-[9px] font-black tracking-[0.2em] mb-1">
               {ss.sciSection.toUpperCase()}
             </p>
             {stats.map((stat, i) => (
               <StatCard
-                key={stat.id}
+                key={`${stat.id}-${paletteIndex}`}
                 stat={stat}
+                gradient={palette.cards[i] ?? palette.cards[0]}
                 index={i}
                 generated={generated}
                 locale={locale}
               />
             ))}
           </div>
-
-          {/* ─── FULL DAILY PLAN ─── */}
-          <motion.div
-            className="mx-4 mt-1 mb-3 bg-white/5 backdrop-blur-sm rounded-xl border border-white/10 p-3"
-            initial={{ opacity: 0, y: 10 }}
-            animate={
-              generated ? { opacity: 1, y: 0 } : { opacity: 0.6, y: 0 }
-            }
-            transition={{ delay: 0.6, duration: 0.4 }}
-          >
-            <p className="text-white/50 text-[9px] font-black tracking-[0.2em] mb-2">
-              {ss.planSection.toUpperCase()}
-            </p>
-
-            <div className="grid grid-cols-2 gap-2 text-white">
-              <div className="bg-amber-500/15 rounded-lg p-2 border border-amber-500/30">
-                <p className="text-amber-300 text-[8px] font-black tracking-wider">
-                  {ss.morning.toUpperCase()}
-                </p>
-                <p className="font-black text-base mt-0.5 tabular-nums">
-                  {dryHalf}g
-                </p>
-                <p className="text-white/60 text-[8px]">{ss.dryFood}</p>
-              </div>
-              <div className="bg-indigo-500/15 rounded-lg p-2 border border-indigo-500/30">
-                <p className="text-indigo-300 text-[8px] font-black tracking-wider">
-                  {ss.evening.toUpperCase()}
-                </p>
-                <p className="font-black text-base mt-0.5 tabular-nums">
-                  {dryHalf}g
-                </p>
-                <p className="text-white/60 text-[8px]">
-                  {ss.dryFood}
-                  {wetProduct ? ` + ${dosage.wet} ${ss.wetFood.toLowerCase()}` : ""}
-                </p>
-              </div>
-            </div>
-
-            <div className="mt-2 pt-2 border-t border-white/10 flex justify-between items-baseline">
-              <span className="text-white/60 text-[9px] font-bold tracking-wider">
-                {ss.dryFood.toUpperCase()} {ss.perDay}
-              </span>
-              <span className="text-purina-red font-black text-sm tabular-nums">
-                {dosage.dry}
-              </span>
-            </div>
-            {wetProduct && (
-              <div className="mt-1 flex justify-between items-baseline">
-                <span className="text-white/60 text-[9px] font-bold tracking-wider">
-                  {ss.wetFood.toUpperCase()} {ss.perDay}
-                </span>
-                <span className="text-purina-red font-black text-sm tabular-nums">
-                  {dosage.wet}
-                </span>
-              </div>
-            )}
-          </motion.div>
 
           {/* ─── FOOTER ─── */}
           <motion.div
@@ -306,35 +263,23 @@ export default function ShareStoryCard({
           </button>
         ) : (
           <>
-            <div className="grid grid-cols-2 gap-2">
-              <button
-                onClick={handleSave}
-                disabled={busy !== "idle"}
-                className="bg-bg-card border border-border-dark hover:bg-bg-card-hover text-text-title font-bold py-3 rounded-full text-xs tracking-wide active:scale-[0.97] transition-all duration-200 disabled:opacity-50"
-              >
-                {busy === "saving"
-                  ? ss.sharing
-                  : feedback === "saved"
-                  ? `\u2713 ${ss.saved}`
-                  : `\u2B07 ${ss.saveImage}`}
-              </button>
-              <button
-                onClick={handleShareToStory}
-                disabled={busy !== "idle"}
-                className="bg-purina-red hover:bg-purina-red-hover text-white font-bold py-3 rounded-full text-xs tracking-wide shadow-md shadow-purina-red/20 active:scale-[0.97] transition-all duration-200 disabled:opacity-50"
-              >
-                {busy === "sharing"
-                  ? ss.sharing
-                  : feedback === "shared"
-                  ? `\u2713 ${ss.shared}`
-                  : `\uD83D\uDCF1 ${ss.shareToStory}`}
-              </button>
-            </div>
             <button
-              onClick={() => {
-                setGenerated(false);
-                setTimeout(() => setGenerated(true), 50);
-              }}
+              onClick={handleShare}
+              disabled={busy}
+              className="bg-purina-red hover:bg-purina-red-hover text-white font-bold py-3.5 rounded-full text-sm tracking-wide shadow-md shadow-purina-red/20 active:scale-[0.97] transition-all duration-200 disabled:opacity-50"
+            >
+              {busy
+                ? ss.sharing
+                : feedback === "shared"
+                ? `\u2713 ${ss.shared}`
+                : feedback === "saved"
+                ? `\u2713 ${ss.saved}`
+                : `\uD83D\uDCF1 ${ss.shareCta}`}
+            </button>
+            <button
+              onClick={() =>
+                setPaletteIndex((idx) => (idx + 1) % PALETTES.length)
+              }
               className="text-text-muted hover:text-text-title text-xs underline underline-offset-2 mt-1"
             >
               {ss.regenerate}
@@ -347,15 +292,36 @@ export default function ShareStoryCard({
 }
 
 // ────────────────────────────────────────────────────────────────────
+// Helper: cross-browser blob-URL download.
+// iOS Safari refuses to download data: URLs from synthetic clicks but
+// happily accepts blob: URLs; Firefox additionally requires the anchor
+// to be in the DOM at click time. This satisfies both.
+// ────────────────────────────────────────────────────────────────────
+function triggerBlobDownload(blob: Blob, filename: string) {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  a.style.display = "none";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  // Defer revoke so Safari has time to start the download.
+  setTimeout(() => URL.revokeObjectURL(url), 4000);
+}
+
+// ────────────────────────────────────────────────────────────────────
 // StatCard — one Spotify-Wrapped-style row inside the story
 // ────────────────────────────────────────────────────────────────────
 function StatCard({
   stat,
+  gradient,
   index,
   generated,
   locale,
 }: {
   stat: ScienceStat;
+  gradient: string;
   index: number;
   generated: boolean;
   locale: string;
@@ -367,7 +333,7 @@ function StatCard({
     <AnimatePresence>
       <motion.div
         key={stat.id}
-        className={`rounded-xl bg-gradient-to-br ${stat.gradient} p-3 shadow-lg`}
+        className={`rounded-xl bg-gradient-to-br ${gradient} p-3 shadow-lg`}
         initial={{ opacity: 0, scale: 0.85, y: 15 }}
         animate={
           generated
@@ -383,19 +349,19 @@ function StatCard({
       >
         <div className="flex items-center gap-3">
           <div className="flex-1 min-w-0">
-            <p className="text-white font-black text-3xl leading-none tracking-tight tabular-nums drop-shadow-md">
+            <p className="text-white font-black text-5xl leading-none tracking-tight tabular-nums drop-shadow-md">
               {stat.value}
             </p>
-            <p className="text-white/95 font-black text-[10px] tracking-tight mt-0.5 leading-tight">
+            <p className="text-white/95 font-black text-[11px] tracking-tight mt-1.5 leading-tight">
               {label}
             </p>
           </div>
-          <span className="text-2xl flex-shrink-0">{stat.emoji}</span>
+          <span className="text-3xl flex-shrink-0">{stat.emoji}</span>
         </div>
-        <p className="text-white/80 text-[8.5px] mt-1 leading-snug">
+        <p className="text-white/85 text-[9px] mt-1.5 leading-snug">
           {caption}
         </p>
-        <p className="text-white/55 text-[7px] mt-1 italic">{stat.source}</p>
+        <p className="text-white/55 text-[7.5px] mt-1 italic">{stat.source}</p>
       </motion.div>
     </AnimatePresence>
   );
