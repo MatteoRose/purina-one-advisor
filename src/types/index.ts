@@ -58,6 +58,12 @@ export interface ScoredRecommendation {
   matchExplanations: MatchExplanation[];
   wet: Product | null;
   dosage: DosageResult;
+  /**
+   * Science-based feeding plan for this pet + product pair (NRC 2006).
+   * The single source of truth shared by NutritionTable, FeedingPlan,
+   * and the Print Plan on the confirmation page.
+   */
+  feedingPlan: import('@/lib/feedingPlan').FeedingPlan;
 }
 
 export interface RecommendationResult {

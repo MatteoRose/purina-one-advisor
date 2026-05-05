@@ -82,7 +82,7 @@ export default function ResultsPage() {
         />
 
         {/* Nutrition Table (for best match) */}
-        <NutritionTable profile={profile} dosage={primary.dosage} />
+        <NutritionTable profile={profile} feedingPlan={primary.feedingPlan} />
 
         {/* Wet Food for primary */}
         {primary.wet && (
@@ -183,7 +183,7 @@ export default function ResultsPage() {
           profile={profile}
           dryProduct={primary.product}
           wetProduct={primary.wet}
-          dosage={primary.dosage}
+          feedingPlan={primary.feedingPlan}
           crossSell={result.crossSell}
           onAddAllToCart={() => {
             const bundle = [

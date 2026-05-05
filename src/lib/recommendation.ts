@@ -1,6 +1,6 @@
 import { DogProfile, Product, RecommendationResult, ScoredRecommendation, MatchExplanation } from '@/types';
 import { PRODUCTS, PRODUCTS_MAP } from './products';
-import { calculateDosage } from './dosage';
+import { computeFeedingPlan, feedingPlanToDosage } from './feedingPlan';
 
 /** Critical health-to-product mappings that get a priority boost (dog) */
 const PRIORITY_HEALTH_MAP_DOG: Record<string, string> = {
@@ -266,7 +266,8 @@ export function getRecommendation(profile: DogProfile): RecommendationResult {
       wetProduct = PRODUCTS_MAP[entry.product.pairing] ?? null;
     }
 
-    const dosage = calculateDosage(entry.product.id, profile.weight);
+    const feedingPlan = computeFeedingPlan(profile, entry.product, wetProduct);
+    const dosage = feedingPlanToDosage(feedingPlan);
 
     return {
       product: entry.product,
@@ -276,6 +277,7 @@ export function getRecommendation(profile: DogProfile): RecommendationResult {
       matchExplanations,
       wet: wetProduct,
       dosage,
+      feedingPlan,
     };
   });
 

@@ -38,16 +38,15 @@ export default function Header() {
 
       {/* Content area */}
       <div className="flex items-center justify-between px-3 sm:px-6 py-3">
-        {/* Left side: brand + subtitle */}
-        <div className="flex items-center">
-          <span className="text-purina-red font-black text-lg sm:text-2xl tracking-wider">
-            PURINA ONE
+        {/* Left side: brand lockup — KIN ADVISOR with PURINA ONE parent overline */}
+        <Link href="/" className="flex flex-col leading-tight group">
+          <span className="text-text-muted text-[9px] sm:text-[10px] font-bold tracking-[0.32em] mb-0.5 group-hover:text-purina-red/70 transition-colors">
+            PURINA&nbsp;&nbsp;ONE
           </span>
-          <div className="w-px h-6 bg-border-dark mx-3 sm:mx-4 hidden sm:block" />
-          <span className="text-text-muted text-sm font-bold tracking-widest hidden sm:block">
-            ADVISOR
+          <span className="text-purina-red font-black text-base sm:text-2xl tracking-wider leading-none">
+            KIN&nbsp;ADVISOR
           </span>
-        </div>
+        </Link>
 
         {/* Right side: cart + theme + language */}
         <div className="flex items-center gap-2 sm:gap-3">

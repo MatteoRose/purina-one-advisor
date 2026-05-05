@@ -1,10 +1,12 @@
 'use client';
 
+import { useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { useAdvisorStore } from '@/stores/useAdvisorStore';
 import { useTranslation } from '@/i18n/config';
 import { PRODUCTS_MAP } from '@/lib/products';
+import { computeFeedingPlan } from '@/lib/feedingPlan';
 
 export default function ConfirmationPage() {
   const { t, locale, interpolate } = useTranslation();
@@ -15,6 +17,20 @@ export default function ConfirmationPage() {
   const clearCart = useAdvisorStore((s) => s.clearCart);
   const discountUnlocked = useAdvisorStore((s) => s.discountUnlocked);
   const primaryProductId = useAdvisorStore((s) => s.primaryProductId);
+
+  // Compute the same FeedingPlan the results page produced. Pure function
+  // of (profile, primary product, paired wet) — guaranteed identical
+  // gram values to NutritionTable + FeedingPlan on the results screen.
+  const feedingPlan = useMemo(() => {
+    const dry = primaryProductId ? PRODUCTS_MAP[primaryProductId] : null;
+    if (!dry) return null;
+    const wet = dry.pairing ? PRODUCTS_MAP[dry.pairing] ?? null : null;
+    return computeFeedingPlan(profile, dry, wet);
+  }, [profile, primaryProductId]);
+
+  const primaryProduct = primaryProductId ? PRODUCTS_MAP[primaryProductId] ?? null : null;
+  const wetProduct =
+    primaryProduct?.pairing ? PRODUCTS_MAP[primaryProduct.pairing] ?? null : null;
 
   const unitPriceFor = (productId: string) => {
     const base = PRODUCTS_MAP[productId]?.price ?? 0;
@@ -114,6 +130,103 @@ export default function ConfirmationPage() {
               </div>
             </div>
           </div>
+
+          {/* Daily Feeding Plan — same numbers as the results page */}
+          {feedingPlan && primaryProduct && (
+            <div className="bg-bg-card rounded-xl border border-border-dark border-l-4 border-l-purina-red p-5 mb-5 shadow-md shadow-black/5 print:break-inside-avoid">
+              <h2 className="font-bold text-text-muted uppercase text-xs tracking-wider mb-4">
+                {t.feedingPlan.printTitle}
+              </h2>
+              <p className="text-text-body text-xs mb-4">
+                {interpolate(t.feedingPlan.printSubtitle, {
+                  name: profile.name || (locale === 'it' ? 'il tuo pet' : 'your pet'),
+                })}
+              </p>
+
+              {/* Daily totals — bold, tabular, prints crisp */}
+              <div className="grid grid-cols-3 gap-3 mb-4">
+                <div className="bg-bg-card-hover/50 rounded-lg p-3 border border-border-dark/50">
+                  <p className="text-[9px] font-bold text-text-muted uppercase tracking-wider">
+                    {t.feedingPlan.totalEnergyLabel}
+                  </p>
+                  <p className="text-purina-red font-black text-lg tabular-nums mt-0.5">
+                    {feedingPlan.merKcal}
+                    <span className="text-[10px] font-medium text-text-muted ml-1">kcal/d</span>
+                  </p>
+                </div>
+                <div className="bg-bg-card-hover/50 rounded-lg p-3 border border-border-dark/50">
+                  <p className="text-[9px] font-bold text-text-muted uppercase tracking-wider">
+                    {t.feedingPlan.totalDryLabel}
+                  </p>
+                  <p className="text-purina-red font-black text-lg tabular-nums mt-0.5">
+                    {feedingPlan.dryGramsLow}&#x2013;{feedingPlan.dryGramsHigh}
+                    <span className="text-[10px] font-medium text-text-muted ml-1">g</span>
+                  </p>
+                </div>
+                <div className="bg-bg-card-hover/50 rounded-lg p-3 border border-border-dark/50">
+                  <p className="text-[9px] font-bold text-text-muted uppercase tracking-wider">
+                    {t.results.dosageWet}
+                  </p>
+                  <p className="text-purina-red font-black text-lg tabular-nums mt-0.5">
+                    {feedingPlan.wetPouches === 0 ? (
+                      <span className="text-text-muted">&mdash;</span>
+                    ) : (
+                      <>
+                        {feedingPlan.wetPouches}
+                        <span className="text-[10px] font-medium text-text-muted ml-1">
+                          &times; 85g
+                        </span>
+                      </>
+                    )}
+                  </p>
+                </div>
+              </div>
+
+              {/* Per-meal split */}
+              <div className="border-t border-border-dark/60 pt-3">
+                <div className="flex items-center justify-between py-2 border-b border-border-dark/40 last:border-0">
+                  <div className="flex items-center gap-2">
+                    <span>&#x2600;&#xFE0F;</span>
+                    <span className="text-text-body text-sm">
+                      {t.feedingPlan.morning} &mdash; {locale === 'it' ? primaryProduct.name : primaryProduct.nameEn}
+                    </span>
+                  </div>
+                  <span className="text-purina-red font-black text-base tabular-nums">
+                    {feedingPlan.dryGramsPerMealLow}&#x2013;{feedingPlan.dryGramsPerMealHigh}g
+                  </span>
+                </div>
+                <div className="flex items-center justify-between py-2 border-b border-border-dark/40 last:border-0">
+                  <div className="flex items-center gap-2">
+                    <span>&#x1F319;</span>
+                    <span className="text-text-body text-sm">
+                      {t.feedingPlan.evening} &mdash; {locale === 'it' ? primaryProduct.name : primaryProduct.nameEn}
+                    </span>
+                  </div>
+                  <span className="text-purina-red font-black text-base tabular-nums">
+                    {feedingPlan.dryGramsPerMealLow}&#x2013;{feedingPlan.dryGramsPerMealHigh}g
+                  </span>
+                </div>
+                {wetProduct && feedingPlan.wetPouches > 0 && (
+                  <div className="flex items-center justify-between py-2">
+                    <div className="flex items-center gap-2">
+                      <span>&#x1F375;</span>
+                      <span className="text-text-body text-sm">
+                        {locale === 'it' ? wetProduct.name : wetProduct.nameEn}
+                      </span>
+                    </div>
+                    <span className="text-purina-red font-black text-base tabular-nums">
+                      {feedingPlan.wetPouches} &times; 85g
+                    </span>
+                  </div>
+                )}
+              </div>
+
+              {/* Formula footer — reproducible math */}
+              <p className="text-[9.5px] text-text-muted leading-snug font-mono tabular-nums mt-3 pt-3 border-t border-border-dark/40">
+                {feedingPlan.formula}
+              </p>
+            </div>
+          )}
 
           {/* Products card */}
           <div className="bg-bg-card rounded-xl border border-border-dark p-5 mb-5 shadow-md shadow-black/5">

@@ -15,23 +15,24 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "Purina ONE Mini Advisor",
+  title: "KIN Advisor — by Purina ONE",
   description:
-    "Personalized nutrition plans crafted just for your small dog. Find the perfect Purina ONE food in minutes.",
+    "Personalized nutrition plans for every dog's body, life stage and need. KIN Advisor — Small Dog. Big Love. Visibly.",
   manifest: "/manifest.json",
   icons: {
     icon: "/favicon.svg",
     apple: "/apple-touch-icon.png",
   },
   openGraph: {
-    title: "Purina ONE Mini Advisor",
-    description: "Personalized nutrition plans crafted just for your small dog.",
+    title: "KIN Advisor — by Purina ONE",
+    description:
+      "Personalized nutrition plans for every dog. Small Dog. Big Love. Visibly.",
     type: "website",
-    siteName: "Purina ONE Mini Advisor",
+    siteName: "KIN Advisor",
   },
   appleWebApp: {
     capable: true,
-    title: "Purina ONE",
+    title: "KIN Advisor",
     statusBarStyle: "black-translucent",
   },
 };

@@ -6,7 +6,7 @@ export const it = {
   },
   header: {
     brand: "PURINA ONE",
-    subtitle: "MINI ADVISOR",
+    subtitle: "KIN ADVISOR",
     cartItem: "pz",
     cartItems: "pz",
   },
@@ -81,6 +81,7 @@ export const it = {
     dosageSubject: "Soggetto:",
     dosageProfile: "Profilo Base:",
     dosageHealth: "Esigenza Specificata:",
+    dosageEnergy: "Energia Giornaliera (MER):",
     dosageDry: "Razione Secco:",
     dosageWet: "Razione Umido:",
     wetTitle: "INTEGRAZIONE MIX FEEDING",
@@ -138,6 +139,10 @@ export const it = {
     trainingReward: "come premio addestramento",
     insight: "Questo approccio mix-feeding fornisce fino al 40% in più di idratazione e copre tutti i fabbisogni di micronutrienti per cani di piccola taglia. Combinare secco e umido migliora la palatabilità e supporta la salute del tratto urinario.",
     addAll: "Aggiungi Piano Completo al Carrello",
+    totalDryLabel: "SECCO · TOTALE GIORN.",
+    totalEnergyLabel: "ENERGIA (MER)",
+    printTitle: "Piano Alimentare Giornaliero",
+    printSubtitle: "Porzioni basate sulla scienza per {name}",
   },
   weekChallenge: {
     gadgetTitle: "Vuoi vincere un gadget?",

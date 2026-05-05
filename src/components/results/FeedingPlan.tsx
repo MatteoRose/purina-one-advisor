@@ -3,13 +3,14 @@
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { useTranslation } from "@/i18n/config";
-import { Product, DosageResult, DogProfile } from "@/types";
+import { Product, DogProfile } from "@/types";
+import type { FeedingPlan as FeedingPlanData } from "@/lib/feedingPlan";
 
 interface FeedingPlanProps {
   profile: DogProfile;
   dryProduct: Product;
   wetProduct: Product | null;
-  dosage: DosageResult;
+  feedingPlan: FeedingPlanData;
   crossSell: Product[];
   onAddAllToCart: () => void;
 }
@@ -18,7 +19,7 @@ export default function FeedingPlan({
   profile,
   dryProduct,
   wetProduct,
-  dosage,
+  feedingPlan,
   crossSell,
   onAddAllToCart,
 }: FeedingPlanProps) {
@@ -26,12 +27,12 @@ export default function FeedingPlan({
   const name = profile.name || (locale === "it" ? "Il tuo cane" : "Your Dog");
   const getName = (p: Product) => (locale === "it" ? p.name : p.nameEn);
 
-  // Parse dry grams from dosage string like "68–83g"
-  const dryGrams = dosage.dry.replace("g", "");
-  const dryHalf = dryGrams
-    .split("\u2013")
-    .map((v) => Math.round(parseInt(v) / 2))
-    .join("\u2013");
+  // Per-meal split comes straight from the science module — no string parsing.
+  const dryHalf = `${feedingPlan.dryGramsPerMealLow}–${feedingPlan.dryGramsPerMealHigh}`;
+  const wetLabel =
+    feedingPlan.wetPouches === 1
+      ? "1 × 85g"
+      : `${feedingPlan.wetPouches} × 85g`;
 
   // Find dental/treat in crossSell
   const dental = crossSell.find((p) => p.type === "care");
@@ -58,6 +59,26 @@ export default function FeedingPlan({
               {fp.subtitle.replace("{name}", name)}
             </p>
           </div>
+        </div>
+      </div>
+
+      {/* Daily totals strip — same numbers as the NutritionTable above */}
+      <div className="grid grid-cols-2 divide-x divide-border-dark border-b border-border-dark bg-bg-card-hover/30">
+        <div className="px-5 py-3">
+          <p className="text-[10px] font-bold text-text-muted uppercase tracking-wider">
+            {fp.totalDryLabel}
+          </p>
+          <p className="text-purina-red font-black text-lg tabular-nums mt-0.5">
+            {feedingPlan.dryGramsLow}&#x2013;{feedingPlan.dryGramsHigh}g
+          </p>
+        </div>
+        <div className="px-5 py-3">
+          <p className="text-[10px] font-bold text-text-muted uppercase tracking-wider">
+            {fp.totalEnergyLabel}
+          </p>
+          <p className="text-purina-red font-black text-lg tabular-nums mt-0.5">
+            {feedingPlan.merKcal} kcal
+          </p>
         </div>
       </div>
 
@@ -132,7 +153,7 @@ export default function FeedingPlan({
                   </p>
                 </div>
                 <span className="text-purina-red font-black text-base sm:text-lg tabular-nums flex-shrink-0">
-                  {dosage.wet}
+                  {wetLabel}
                 </span>
               </div>
             )}
@@ -162,7 +183,7 @@ export default function FeedingPlan({
                     />
                     <p className="text-text-body text-xs">
                       {getName(dental)}{" "}
-                      <span className="text-text-muted">— {fp.dailyStick}</span>
+                      <span className="text-text-muted">&mdash; {fp.dailyStick}</span>
                     </p>
                   </div>
                 )}
@@ -178,7 +199,7 @@ export default function FeedingPlan({
                     <p className="text-text-body text-xs">
                       {getName(treat)}{" "}
                       <span className="text-text-muted">
-                        — {fp.trainingReward}
+                        &mdash; {fp.trainingReward}
                       </span>
                     </p>
                   </div>
@@ -193,6 +214,9 @@ export default function FeedingPlan({
       <div className="bg-bg-card-hover/60 px-5 sm:px-6 py-4 border-t border-border-dark">
         <p className="text-text-body text-xs leading-relaxed italic">
           &#x1F4A1; {fp.insight}
+        </p>
+        <p className="text-[10px] text-text-muted leading-snug font-mono tabular-nums mt-2">
+          {feedingPlan.formula}
         </p>
       </div>
 

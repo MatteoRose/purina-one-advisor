@@ -6,7 +6,7 @@ export const en = {
   },
   header: {
     brand: "PURINA ONE",
-    subtitle: "MINI ADVISOR",
+    subtitle: "KIN ADVISOR",
     cartItem: "item",
     cartItems: "items",
   },
@@ -81,6 +81,7 @@ export const en = {
     dosageSubject: "Subject:",
     dosageProfile: "Base Profile:",
     dosageHealth: "Health Need:",
+    dosageEnergy: "Daily Energy (MER):",
     dosageDry: "Dry Ration:",
     dosageWet: "Wet Ration:",
     wetTitle: "MIX FEEDING INTEGRATION",
@@ -138,6 +139,10 @@ export const en = {
     trainingReward: "as training reward",
     insight: "This mix-feeding approach provides up to 40% more hydration and covers all micronutrient needs for small dogs. Combining dry and wet food improves palatability and supports urinary tract health.",
     addAll: "Add Full Plan to Cart",
+    totalDryLabel: "DRY · DAILY TOTAL",
+    totalEnergyLabel: "ENERGY (MER)",
+    printTitle: "Daily Feeding Plan",
+    printSubtitle: "Science-based portions for {name}",
   },
   weekChallenge: {
     gadgetTitle: "Want to win a gadget?",
