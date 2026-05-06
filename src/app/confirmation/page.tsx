@@ -241,17 +241,25 @@ export default function ConfirmationPage() {
               return (
                 <div
                   key={item.productId}
-                  className="flex justify-between py-2.5 border-b border-border-dark last:border-0"
+                  className="flex items-start justify-between gap-3 py-2.5 border-b border-border-dark last:border-0"
                 >
-                  <span className="text-sm text-text-body flex items-center gap-1.5">
-                    {getProductName(item.productId)} &times; {item.quantity}
+                  {/* Left column: product name + discount badge below (never collides with price) */}
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm text-text-body leading-snug">
+                      {getProductName(item.productId)} &times; {item.quantity}
+                    </p>
                     {isDiscounted && (
-                      <span className="text-[10px] font-bold text-green-400 bg-green-500/15 border border-green-500/25 px-1.5 py-0.5 rounded-full">
+                      <span className="inline-block mt-1 text-[10px] font-bold text-green-400 bg-green-500/15 border border-green-500/25 px-1.5 py-0.5 rounded-full whitespace-nowrap">
                         &minus;20%
                       </span>
                     )}
-                  </span>
-                  <span className={`font-bold tabular-nums ${isDiscounted ? 'text-green-500' : 'text-text-title'}`}>
+                  </div>
+                  {/* Right column: price — always one line, never wraps */}
+                  <span
+                    className={`font-bold tabular-nums whitespace-nowrap flex-shrink-0 ${
+                      isDiscounted ? 'text-green-500' : 'text-text-title'
+                    }`}
+                  >
                     &euro; {subtotal.toFixed(2)}
                   </span>
                 </div>
@@ -260,20 +268,20 @@ export default function ConfirmationPage() {
 
             {/* Savings line */}
             {savings > 0 && (
-              <div className="flex justify-between pt-3 text-sm">
-                <span className="text-green-500 font-medium">
+              <div className="flex items-start justify-between gap-3 pt-3 text-sm">
+                <span className="text-green-500 font-medium flex-1 min-w-0">
                   &#x2713; {locale === 'it' ? 'Sconto applicato' : 'Discount applied'} (&minus;20%)
                 </span>
-                <span className="text-green-500 font-bold tabular-nums">
+                <span className="text-green-500 font-bold tabular-nums whitespace-nowrap flex-shrink-0">
                   &minus; &euro; {savings.toFixed(2)}
                 </span>
               </div>
             )}
 
             {/* Total */}
-            <div className="flex justify-between pt-4 mt-2 border-t-2 border-purina-red">
+            <div className="flex items-baseline justify-between gap-3 pt-4 mt-2 border-t-2 border-purina-red">
               <span className="text-lg font-bold text-text-title">{t.confirmation.totalLabel}</span>
-              <span className="text-2xl font-black text-purina-red tabular-nums">
+              <span className="text-2xl font-black text-purina-red tabular-nums whitespace-nowrap flex-shrink-0">
                 &euro; {total.toFixed(2)}
               </span>
             </div>
