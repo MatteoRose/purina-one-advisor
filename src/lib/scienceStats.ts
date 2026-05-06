@@ -312,21 +312,43 @@ export const SCIENCE_STATS: ScienceStat[] = [
 ];
 
 /**
- * Returns the top N stats most relevant to this user's profile + product.
- * Sorts by priority — universal stats sit at the top by default but
- * profile/product-specific matches outrank them when applicable, so two
- * different pets get measurably different stat sets.
+ * Returns N stats most relevant to this user's profile + product, sorted by
+ * priority. The TOP priority stat is always pinned to position 0 (the
+ * brand-promise anchor); the remaining slots cycle through the rest of the
+ * matched pool based on `offset`, so users who tap "Shuffle" see different
+ * facts each time without losing the most important one.
  *
- * Always guarantees at least one universal stat in the result so the
- * brand-anchor (28-day vitality) carries through every share.
+ * Examples (Junior dog with sensitive digestion, pool of 7 matched stats):
+ *   offset=0 → [vitality_28, single_protein_70, prebiotic_50]
+ *   offset=1 → [vitality_28, prebiotic_50, dha_brain_4x]
+ *   offset=2 → [vitality_28, dha_brain_4x, antioxidant_2x]
+ *   ...
  */
 export function getStatsFor(
   profile: DogProfile,
   product: Product,
-  limit = 3
+  limit = 3,
+  offset = 0
 ): ScienceStat[] {
   const matched = SCIENCE_STATS.filter((s) => s.matches(profile, product)).sort(
     (a, b) => b.priority - a.priority
   );
-  return matched.slice(0, limit);
+
+  if (matched.length === 0) return [];
+  if (matched.length <= limit) return matched;
+
+  // Pin the top-priority stat at position 0 — never rotates away.
+  const top = matched[0];
+  const rest = matched.slice(1);
+  const remaining = limit - 1;
+
+  // Cycle through `rest` based on offset. Each shuffle moves the window
+  // forward by `remaining` slots, wrapping at pool size for infinite loop.
+  const start = (offset * remaining) % rest.length;
+  const picked: ScienceStat[] = [];
+  for (let i = 0; i < remaining; i++) {
+    picked.push(rest[(start + i) % rest.length]);
+  }
+
+  return [top, ...picked];
 }

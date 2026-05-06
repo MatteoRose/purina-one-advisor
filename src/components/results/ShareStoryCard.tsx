@@ -53,11 +53,33 @@ export default function ShareStoryCard({
   );
   const palette = PALETTES[paletteIndex];
 
+  // Shuffle index rotates the stat selection — top-priority stat stays
+  // pinned at position 0 ("anchor"), positions 1 and 2 cycle through the
+  // remaining matched pool. Increments alongside paletteIndex on shuffle.
+  const [shuffleIndex, setShuffleIndex] = useState(0);
+
+  // One-shot trigger for the red-particle burst when the user reveals
+  // the wrapped. Cleared after 800ms so the particles unmount.
+  const [burstFlash, setBurstFlash] = useState(false);
+
   const name = profile.name || (locale === "it" ? "Il tuo pet" : "Your Pet");
   const productName = locale === "it" ? product.name : product.nameEn;
 
-  // Pre-compute 3 stats for this profile + product (priority-sorted).
-  const stats = getStatsFor(profile, product, 3);
+  // Stats — re-derived every render so shuffle changes them on the fly.
+  const stats = getStatsFor(profile, product, 3, shuffleIndex);
+
+  // ───────────────────── Reveal & shuffle ─────────────────────
+  const handleGenerate = () => {
+    setBurstFlash(true);
+    setGenerated(true);
+    // Particles live ~700ms, give a small buffer before unmount.
+    window.setTimeout(() => setBurstFlash(false), 800);
+  };
+
+  const handleShuffle = () => {
+    setPaletteIndex((idx) => (idx + 1) % PALETTES.length);
+    setShuffleIndex((idx) => idx + 1);
+  };
 
   // ───────────────────── Export ─────────────────────
   const exportPng = async (): Promise<{ blob: Blob; file: File } | null> => {
@@ -141,7 +163,8 @@ export default function ShareStoryCard({
           style={{ width: 360, maxWidth: "100%" }}
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
-          onClick={() => setGenerated(true)}
+          exit={{ opacity: 0, scale: 0.92 }}
+          onClick={handleGenerate}
         >
           <div
             className="relative overflow-hidden rounded-3xl shadow-2xl shadow-purina-red/30"
@@ -207,16 +230,60 @@ export default function ShareStoryCard({
         </motion.div>
       )}
 
-      {/* ════════════ THE CARD (360×640 source → 1080×1920 PNG) ════════════
-           Only rendered AFTER generated=true so it can spring in dramatically. */}
+      {/* ════════════ THE CARD (360×760 source → 1080×2280 PNG) ════════════
+           Only rendered AFTER generated=true so it can spring in dramatically.
+           Wrapped in a motion.div so the entrance is a spring-pop with slight
+           overshoot (scale 0.5 → 1.05 → 1) — the "surprise" reveal mechanic. */}
       {generated && (
-      <div className="relative mx-auto" style={{ width: 360, maxWidth: "100%" }}>
+      <motion.div
+        className="relative mx-auto"
+        style={{ width: 360, maxWidth: "100%" }}
+        initial={{ scale: 0.5, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{
+          type: "spring",
+          stiffness: 220,
+          damping: 16,
+          mass: 0.9,
+        }}
+      >
+        {/* ─── Particle burst — 14 red dots radiating outward from center,
+             only present for the first ~700ms of the reveal. ─── */}
+        {burstFlash && (
+          <div className="absolute inset-0 pointer-events-none flex items-center justify-center z-10">
+            {Array.from({ length: 14 }).map((_, i) => {
+              const angle = (i / 14) * Math.PI * 2;
+              const distance = 180 + (i % 3) * 40; // varied radius for organic feel
+              const dx = Math.cos(angle) * distance;
+              const dy = Math.sin(angle) * distance;
+              return (
+                <motion.div
+                  key={i}
+                  className="absolute w-2.5 h-2.5 rounded-full"
+                  style={{
+                    background: "#E91C24",
+                    boxShadow: "0 0 10px rgba(233,28,36,0.7)",
+                  }}
+                  initial={{ x: 0, y: 0, opacity: 1, scale: 1 }}
+                  animate={{
+                    x: dx,
+                    y: dy,
+                    opacity: 0,
+                    scale: 0.3,
+                  }}
+                  transition={{ duration: 0.7, ease: "easeOut" }}
+                />
+              );
+            })}
+          </div>
+        )}
+
         <div
           ref={cardRef}
-          className="relative overflow-hidden rounded-3xl shadow-2xl shadow-purina-red/20"
+          className="relative overflow-hidden rounded-3xl shadow-2xl shadow-purina-red/30"
           style={{
             width: 360,
-            height: 640,
+            height: 760,
             background: palette.bg,
           }}
         >
@@ -283,8 +350,11 @@ export default function ShareStoryCard({
             </div>
           </motion.div>
 
-          {/* ─── 3 BIG-NUMBER STAT CARDS — palette-driven gradients ─── */}
-          <div className="px-4 pt-3 pb-4 space-y-2">
+          {/* ─── 3 BIG-NUMBER STAT CARDS — palette-driven gradients ───
+                pb-24 leaves room for the absolute-positioned footer below
+                so the third stat card never gets clipped, even on the
+                taller 760px canvas. */}
+          <div className="px-4 pt-3 pb-24 space-y-2.5">
             <p className="text-white/55 text-[9px] font-black tracking-[0.2em] mb-1">
               {ss.sciSection.toUpperCase()}
             </p>
@@ -327,8 +397,7 @@ export default function ShareStoryCard({
             </div>
           </motion.div>
         </div>
-      </div>
-
+      </motion.div>
       )}
 
       {/* ════════════ ACTIONS — only after generation ════════════ */}
@@ -348,9 +417,7 @@ export default function ShareStoryCard({
                 : `\uD83D\uDCF1 ${ss.shareCta}`}
             </button>
             <button
-              onClick={() =>
-                setPaletteIndex((idx) => (idx + 1) % PALETTES.length)
-              }
+              onClick={handleShuffle}
               className="text-text-muted hover:text-text-title text-xs underline underline-offset-2 mt-1"
             >
               {ss.regenerate}

@@ -170,7 +170,7 @@ export const it = {
     teaser: "Il Wrapped del tuo Pet",
     teaserSub: "Story personalizzata — basata sulla scienza",
     generateBtn: "Genera il mio Wrapped",
-    regenerate: "Cambia colori",
+    regenerate: "Mescola — nuove stat e colori",
     shareCta: "Condividi / Salva",
     sharing: "In corso…",
     saved: "Salvato!",

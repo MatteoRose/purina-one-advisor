@@ -169,7 +169,7 @@ export const en = {
     teaser: "Your Pet's Wrapped",
     teaserSub: "Story-style share — tailored, science-backed",
     generateBtn: "Generate My Wrapped",
-    regenerate: "Shuffle colors",
+    regenerate: "Shuffle — new stats & colors",
     shareCta: "Share / Save",
     sharing: "Working…",
     saved: "Saved!",
