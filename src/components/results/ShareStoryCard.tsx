@@ -132,7 +132,84 @@ export default function ShareStoryCard({
         <p className="text-text-muted text-xs mt-1">{ss.teaserSub}</p>
       </div>
 
-      {/* ════════════ THE CARD (360×640 source → 1080×1920 PNG) ════════════ */}
+      {/* ════════════ TEASER PLACEHOLDER (before user clicks Generate) ════════════
+           Hides the actual card until after the reveal click — gives a "gift
+           unboxing" moment instead of a sad faded preview. */}
+      {!generated && (
+        <motion.div
+          className="relative mx-auto cursor-pointer"
+          style={{ width: 360, maxWidth: "100%" }}
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          onClick={() => setGenerated(true)}
+        >
+          <div
+            className="relative overflow-hidden rounded-3xl shadow-2xl shadow-purina-red/30"
+            style={{
+              width: 360,
+              maxWidth: "100%",
+              height: 320,
+              background:
+                "linear-gradient(135deg, #0a0a0a 0%, #1a0a0c 50%, #0a0a0a 100%)",
+            }}
+          >
+            {/* Animated red glow that breathes */}
+            <motion.div
+              className="absolute inset-0 pointer-events-none"
+              animate={{ opacity: [0.3, 0.6, 0.3] }}
+              transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+              style={{
+                background:
+                  "radial-gradient(circle 280px at 50% 50%, rgba(233,28,36,0.35) 0%, transparent 70%)",
+              }}
+            />
+            {/* Subtle grain texture */}
+            <div
+              className="absolute inset-0 opacity-[0.05] pointer-events-none"
+              style={{
+                backgroundImage:
+                  "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>\")",
+              }}
+            />
+
+            {/* Centered content */}
+            <div className="relative h-full flex flex-col items-center justify-center px-6 text-center">
+              <motion.span
+                className="text-5xl mb-2"
+                animate={{ scale: [1, 1.1, 1] }}
+                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+              >
+                {"✨"}
+              </motion.span>
+              <p className="text-[10px] font-black tracking-[0.42em] text-white/70 mb-1">
+                PURINA&nbsp;&nbsp;ONE
+              </p>
+              <h3 className="text-white font-black text-2xl leading-tight tracking-tight">
+                {interpolate(ss.storyHero, { name: name.toUpperCase() })}
+              </h3>
+              <p className="text-purina-red font-black text-[11px] tracking-[0.3em] mt-1">
+                KIN&nbsp;ADVISOR&nbsp;WRAPPED
+              </p>
+              <div className="h-px w-16 bg-purina-red/60 mt-3 mb-3" />
+              <p className="text-white/75 text-xs max-w-[260px] leading-snug">
+                {ss.teaserSub}
+              </p>
+
+              {/* CTA button INSIDE the box */}
+              <div className="mt-5 bg-gradient-to-r from-purina-red via-rose-500 to-orange-500 text-white font-black py-3 px-7 rounded-full text-sm tracking-wide shadow-lg shadow-purina-red/40">
+                {"✨"} {ss.generateBtn}
+              </div>
+              <p className="text-white/40 text-[10px] mt-3 italic">
+                Guided by Nutrition. Led by Purina.
+              </p>
+            </div>
+          </div>
+        </motion.div>
+      )}
+
+      {/* ════════════ THE CARD (360×640 source → 1080×1920 PNG) ════════════
+           Only rendered AFTER generated=true so it can spring in dramatically. */}
+      {generated && (
       <div className="relative mx-auto" style={{ width: 360, maxWidth: "100%" }}>
         <div
           ref={cardRef}
@@ -252,17 +329,11 @@ export default function ShareStoryCard({
         </div>
       </div>
 
-      {/* ════════════ ACTIONS ════════════ */}
-      <div className="mt-5 flex flex-col gap-2 max-w-sm mx-auto">
-        {!generated ? (
-          <button
-            onClick={() => setGenerated(true)}
-            className="bg-gradient-to-r from-purina-red via-rose-500 to-orange-500 text-white font-black py-3.5 rounded-full text-sm tracking-wide shadow-lg shadow-purina-red/30 hover:shadow-xl hover:shadow-purina-red/50 active:scale-[0.97] transition-all duration-200"
-          >
-            &#x2728; {ss.generateBtn}
-          </button>
-        ) : (
-          <>
+      )}
+
+      {/* ════════════ ACTIONS — only after generation ════════════ */}
+      {generated && (
+        <div className="mt-5 flex flex-col gap-2 max-w-sm mx-auto">
             <button
               onClick={handleShare}
               disabled={busy}
@@ -284,9 +355,8 @@ export default function ShareStoryCard({
             >
               {ss.regenerate}
             </button>
-          </>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }

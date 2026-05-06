@@ -309,6 +309,67 @@ export default function ConfirmationPage() {
               {t.confirmation.restart}
             </button>
           </div>
+
+          {/* ─── KIN ADVISOR branded outro — replaces the awkward black/green
+                area that was bleeding through under the products card on
+                mobile. Sealed black box with Purina red accents + brand
+                motto, prevents the page background from showing past the
+                main content. ─── */}
+          <motion.div
+            className="mt-10 mb-4 relative overflow-hidden rounded-2xl no-print"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.6, duration: 0.5 }}
+          >
+            <div
+              className="relative px-6 sm:px-8 py-7 sm:py-8 text-center"
+              style={{
+                background:
+                  'linear-gradient(135deg, #0a0a0a 0%, #1a0a0c 50%, #0a0a0a 100%)',
+              }}
+            >
+              {/* Animated red glow */}
+              <motion.div
+                className="absolute inset-0 pointer-events-none"
+                animate={{ opacity: [0.25, 0.5, 0.25] }}
+                transition={{
+                  duration: 4,
+                  repeat: Infinity,
+                  ease: 'easeInOut',
+                }}
+                style={{
+                  background:
+                    'radial-gradient(circle 320px at 50% 50%, rgba(233,28,36,0.28) 0%, transparent 70%)',
+                }}
+              />
+
+              {/* Top red rule */}
+              <div className="relative h-px w-12 mx-auto bg-purina-red mb-4" />
+
+              {/* Parent brand label */}
+              <p className="relative text-[10px] font-black tracking-[0.42em] text-white/70 mb-2">
+                PURINA&nbsp;&nbsp;ONE
+              </p>
+
+              {/* KIN ADVISOR wordmark */}
+              <h3 className="relative text-purina-red font-black text-3xl sm:text-4xl tracking-tight leading-none drop-shadow-[0_0_30px_rgba(233,28,36,0.55)]">
+                KIN&nbsp;ADVISOR
+              </h3>
+
+              {/* Motto */}
+              <p className="relative text-white/95 font-light italic text-sm sm:text-base mt-4">
+                Guided by Nutrition. Led by Purina.
+              </p>
+
+              {/* Bottom red rule */}
+              <div className="relative h-px w-12 mx-auto bg-purina-red mt-4" />
+
+              {/* Tiny attribution / URL */}
+              <p className="relative text-white/40 text-[10px] mt-3 font-mono tracking-wider">
+                kin.purina.it
+              </p>
+            </div>
+          </motion.div>
         </motion.div>
       </div>
     </div>
