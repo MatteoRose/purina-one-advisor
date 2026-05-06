@@ -183,6 +183,9 @@ export const it = {
     footerUrl: "purina-one-advisor.vercel.app",
     weight: "{kg} kg",
     matchPct: "{score}% match",
+    shareTitle: "Il wrapped di {name} — KIN Advisor",
+    shareText:
+      "✨ Ecco il wrapped di {name} con KIN Advisor — nutrizione personalizzata per il tuo cane. Provalo anche tu → {url}",
   },
   discount: {
     badge: "-20%",

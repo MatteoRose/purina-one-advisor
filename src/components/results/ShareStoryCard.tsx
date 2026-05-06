@@ -119,10 +119,16 @@ export default function ShareStoryCard({
 
       if (canNativeShare) {
         try {
+          // Full URL with https:// so WhatsApp/Telegram/iOS Messages
+          // auto-detect it as a tappable link. A bare hostname like
+          // "purina-one-advisor.vercel.app" reads as plain text and
+          // doesn't get linkified by most messengers.
+          const shareUrl = "https://purina-one-advisor.vercel.app";
           await navigator.share({
             files: [out.file],
-            title: interpolate(ss.storyHero, { name }),
-            text: ss.footerUrl,
+            title: interpolate(ss.shareTitle, { name }),
+            text: interpolate(ss.shareText, { name, url: shareUrl }),
+            url: shareUrl,
           });
           setFeedback("shared");
         } catch (err: unknown) {
