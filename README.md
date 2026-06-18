@@ -4,7 +4,7 @@ An interactive web app that recommends the optimal Purina ONE product for a dog 
 
 > 🏆 **1st place — Nestlé × Bocconi competition**, ranked first across all sections of the course.
 
-**Live demo:** `[add your Vercel URL]`
+**Live demo:** `(https://purina-one-advisor.vercel.app/)`
 
 ---
 
