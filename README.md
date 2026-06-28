@@ -94,3 +94,4 @@ Other scripts: `npm run build` (production build), `npm run start` (serve the bu
 Matteo Massimo Rosetti — `https://www.linkedin.com/in/matteorosetti/`
 
 *Built for the Nestlé × Bocconi competition. Not affiliated with or endorsed by Nestlé/Purina; product names and nutritional claims are used for the academic project only.*
+
